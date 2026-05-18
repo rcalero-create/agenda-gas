@@ -1,4 +1,60 @@
-<script>
 
-    
+<script>
+// 1. Esperem que TOTA la pàgina web estigui completament carregada i lesta
+document.addEventListener('DOMContentLoaded', function() {
+    // Aquí dins pots posar el codi que vulguis que s'executi a l'inici,
+    // o simplement deixar-ho preparat per quan es cliqui el botó.
+});
+
+function crearTablaContactos() {
+    let tabla = document.getElementById('tablaContactos');
+    if (tabla) tabla.remove();
+
+    // 2. Cridem a Google de manera segura
+    google.script.run
+        .withSuccessHandler(function(obj) {
+            
+            console.log("Dades rebudes de Google a l'HTML:", obj);
+
+            // CONTROL DE SEGURETAT REAL
+            if (obj === null || typeof obj === 'undefined' || obj.length === 0) {
+                console.warn("Google ha retornat null. Forcem la lectura directa.");
+                document.getElementById('divContactos').innerHTML = "<p class='text-danger'>Error: No s'han pogut rebre les dades del servidor (arriben buides).</p>";
+                return; // Parem l'execució aquí perquè no busqui el .length i no doni l'error "Uncaught jt"
+            }
+
+            // Si ha passat el control i tenim dades reals, creem la taula:
+            tabla = document.createElement('table');
+            tabla.id = 'tablaContactos';
+
+            let tablaHeader = document.createElement('thead');
+            let tablaBody = document.createElement('tbody');
+
+            for (let i = 0; i < obj.length; i++) {
+                let fila = document.createElement('tr');
+                for (let j = 0; j < obj[i].length; j++) {
+                    let celda = document.createElement('td');
+                    celda.textContent = obj[i][j];
+                    fila.appendChild(celda);
+                }
+
+                if (i == 0) {
+                    tablaHeader.appendChild(fila);
+                    tabla.appendChild(tablaHeader);
+                } else {
+                    tablaBody.appendChild(fila);
+                }
+            }
+
+            tablaHeader.classList.add('table-dark');
+            tabla.appendChild(tablaBody);
+            tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success');
+            document.getElementById('divContactos').appendChild(tabla);
+        })
+        .withFailureHandler(function(error) {
+            console.error("Error crític al llegir els contactes: " + error.message);
+        })
+        .obtenerContactos();
+}
 </script>
+    
