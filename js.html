@@ -1,18 +1,24 @@
-
 <script>
+
 // 1. Esperem que TOTA la pàgina web estigui completament carregada i lesta
 document.addEventListener('DOMContentLoaded', function() {
-    // Aquí dins pots posar el codi que vulguis que s'executi a l'inici,
-    // o simplement deixar-ho preparat per quan es cliqui el botó.
+    // Espai reservat per a codi d'inici si cal
 });
 
 function crearTablaContactos() {
+
+    // Borrar tabla en el caso que exista
     let tabla = document.getElementById('tablaContactos');
     if (tabla) tabla.remove();
 
     // 2. Cridem a Google de manera segura
     google.script.run
-        .withSuccessHandler(function(obj) {
+        .withSuccessHandler(crearTablaContactosCorrectamente)
+        .withFailureHandler(crearTablaContactosError)
+        .obtenerContactos();
+}
+
+function crearTablaContactosCorrectamente(obj) {
             
             console.log("Dades rebudes de Google a l'HTML:", obj);
 
@@ -20,7 +26,7 @@ function crearTablaContactos() {
             if (obj === null || typeof obj === 'undefined' || obj.length === 0) {
                 console.warn("Google ha retornat null. Forcem la lectura directa.");
                 document.getElementById('divContactos').innerHTML = "<p class='text-danger'>Error: No s'han pogut rebre les dades del servidor (arriben buides).</p>";
-                return; // Parem l'execució aquí perquè no busqui el .length i no doni l'error "Uncaught jt"
+                return; 
             }
 
             // Si ha passat el control i tenim dades reals, creem la taula:
@@ -28,33 +34,102 @@ function crearTablaContactos() {
             tabla.id = 'tablaContactos';
 
             let tablaHeader = document.createElement('thead');
+            tablaHeader.classList.add('table-dark'); // Afegim la classe dark a la capçalera
             let tablaBody = document.createElement('tbody');
 
-            for (let i = 0; i < obj.length; i++) {
+            // Header de la tabla (Fila 0)
+            let primeraFila = document.createElement('tr');
+            for (let i = 0; i < obj[0].length; i++) {
+                let celda = document.createElement('th'); // Canviat a 'th' perquè quedi com a capçalera real
+                celda.textContent = obj[0][i];
+                primeraFila.appendChild(celda);
+            }
+            tablaHeader.appendChild(primeraFila); 
+            tabla.appendChild(tablaHeader);
+
+            // Body de la tabla (A partir de la fila 1)
+            for (let i = 1; i < obj.length; i++) {
                 let fila = document.createElement('tr');
                 for (let j = 0; j < obj[i].length; j++) {
                     let celda = document.createElement('td');
                     celda.textContent = obj[i][j];
                     fila.appendChild(celda);
                 }
+                tablaBody.appendChild(fila);
+            } 
 
-                if (i == 0) {
-                    tablaHeader.appendChild(fila);
-                    tabla.appendChild(tablaHeader);
-                } else {
-                    tablaBody.appendChild(fila);
-                }
-            }
-
-            tablaHeader.classList.add('table-dark');
+            // Ajuntem tota la taula i apliquem estils
             tabla.appendChild(tablaBody);
-            tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success');
+            tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success', 'border-dark');
             document.getElementById('divContactos').appendChild(tabla);
-        })
-        .withFailureHandler(function(error) {
-            console.error("Error crític al llegir els contactes: " + error.message);
-        })
-        .obtenerContactos();
-}
+
+            // Mostrar notificación de ok
+            crearNotificacionOk( 'Contenido obtenidos correctamente', 'Todo en orden');
+
+        }
+
+        function crearTablaContactosError() {
+          // Mostrar notificación de error
+          crearNotificacionError('No se ha encontrado los datos', 'ERROR');
+
+        }
+
+        function crearNotificacion(mensaje, titulo) {
+
+          document.getElementById('mensajeNotificacion').textContent = mensaje;
+          document.getElementById('tituloNotificacion').textContent = titulo;
+          let elementoNotificacion = document.getElementById('notificacion');
+          bootstrap.Toast.getOrCreateInstance(elementoNotificacion).show();
+
+        }
+
+        function crearNotificacionOk(mensaje,titulo) {
+
+          crearNotificacion(mensaje, titulo);
+          crearIconoNotificacionOk();
+          crearColorNotificacion('--color-verde-oscuro');
+
+        }
+
+        function crearNotificacionError(mensaje,titulo) {
+
+          crearNotificacion(mensaje, titulo);
+          crearIconoNotificacionError();
+          crearColorNotificacion('--color-rojo-oscuro');
+          
+        }
+
+        function crearNotificacionAdvertencia(mensaje,titulo) {
+
+          crearNotificacion(mensaje, titulo);
+          crearIconoNotificacionAdvertencia();
+          crearColorNotificacion('--color-amarillo-oscuro');
+
+        }
+
+        function crearIconoNotificacionOk() {
+          document.getElementById('iconoNotificacion').className = '';             
+          document.getElementById('iconoNotificacion').classList.add('bi', 'bi-check2-square');
+
+        }
+
+        function crearIconoNotificacionError() {
+          document.getElementById('iconoNotificacion').className = '';             
+          document.getElementById('iconoNotificacion').classList.add('bi', 'bi-bug');
+          
+        }
+
+        function crearIconoNotificacionAdvertencia() {
+          document.getElementById('iconoNotificacion').className = '';             
+          document.getElementById('iconoNotificacion').classList.add('bi', 'bi-exclamation-triangle');
+          
+        }
+
+        function crearColorNotificacion(color) {
+          let elementoNotificacion = document.getElementById('notificacion');
+          elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
+
+        }
+
+        
 </script>
-    
