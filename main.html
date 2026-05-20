@@ -1,21 +1,22 @@
 <main>
     <!-- Formulario -->
+    <main>
     <div class="d-flex justify-content-center my-3">
-    <form id="formulario">
+    <form id="formulario" onsubmit="event.preventDefault(); enviarFormularioManual();">
         
         <div class="mb-3">
             <label for="nombre" class="form label">Introduce el nombre del contacto</label>
-            <input type="text" class="form-control" name="nombre" id="nombre">
+            <input type="text" class="form-control" name="nombre" id="nombre" required>
         </div>
 
         <div class="mb-3">
             <label for="correo" class="form label">Introduce el correo del contacto</label>
-            <input type="email" class="form-control" name="correo" id="correo">
+            <input type="email" class="form-control" name="correo" id="correo" required>
         </div>
 
         <button type="button" class="btn btn-success m-3" onclick="crearTablaContactos();">Mostrar contactos</button>
         
-        <button type="button" class="btn btn-primary" onclick="enviarFormularioManual();">Crear contacto</button>
+        <button type="submit" class="btn btn-primary">Crear contacto</button>
 
     </form>
 </div>

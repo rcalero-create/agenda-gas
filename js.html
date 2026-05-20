@@ -182,9 +182,14 @@ function crearTablaContactosCorrectamente(obj) {
         function enviarFormularioManual() {
     const formulario = document.getElementById('formulario');
     
+    // CONTROL DE SEGURETAT EN LOCAL: Si estan buits, no enviem res a Google i avisem amb un Toast d'advertència
+    if (!formulario.nombre.value.trim() || !formulario.correo.value.trim()) {
+        crearNotificacionAdvertencia('Por favor, rellena todos los campos antes de enviar.', 'Camps buits');
+        return; // Aturem l'execució immediatament aquí, evitant trucar a Google
+    }
+    
     console.log("Enviant dades de forma nativa a través de Google...");
 
-    // Cridem directament la funció de Google Apps Script de forma neta
     google.script.run
         .withSuccessHandler(enviarFormularioCorrecto)
         .withFailureHandler(enviarFormularioError)
