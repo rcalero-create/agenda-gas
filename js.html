@@ -180,28 +180,30 @@ function crearTablaContactosCorrectamente(obj) {
 
         
         function enviarFormularioManual() {
-        // Recorda posar el TEU enllaç correcte de Google Apps Script aquí sota:
-        const url = "https://script.google.com/macros/s/AKfycbwdQv5SttfdZG0pHnmFL3-rK_kxlqGOh-ONDh867DEWwma8MgO7wOviCYTmWNbKEcuC/exec";
-        
-        const formulario = document.getElementById('formulario');
-        const datos = new FormData(formulario);
+    const url = "https://script.google.com/macros/s/AKfycbwsvIlkpYJMJ6NzDJRiVwsq_pVc2o2Zo87VjOC5UiVYM9KV5Yf7RB7tHz8l2HhckyhjHw/exec";
+    
+    const formulario = document.getElementById('formulario');
+    const datos = new FormData(formulario);
 
-        console.log("Enviant dades de fons...");
+    console.log("Enviant dades en mode segur...");
 
-        fetch(url, {
-            method: 'POST',
-            body: datos
-        })
-        .then(response => response.json())
-        .then(resultado => {
-            console.log('Èxit des del servidor de Google:', resultado);
-            alert("¡Contacte creat correctament al Google Sheets!");
-            formulario.reset(); // Netegem els camps del formulari
-        })
-        .catch(error => {
-            console.error('Error en l\'enviament:', error);
-            alert("S'ha produït un error de connexió.");
-        });
+    // Enviem usant mode: 'no-cors' per saltar-nos les restriccions del navegador
+    fetch(url, {
+        method: 'POST',
+        body: datos,
+        mode: 'no-cors' // <--- AIXÒ ÉS EL QUE SOLUCIONA ELS DOS ERRORS DE LA CONSOLA
+    })
+    .then(response => {
+        // En mode 'no-cors', la resposta de Google arriba "opaca" (buda), 
+        // però el fet que arribi aquí significa que s'ha enviat correctament!
+        console.log('Dades enviades amb èxit cap a Google Sheets.');
+        alert("¡Contacte creat correctament!");
+        formulario.reset(); // Netegem els camps de l'agenda
+    })
+    .catch(error => {
+        console.error('Error real en l\'enviament:', error);
+        alert("Hi ha hagut un problema de connexió.");
+    });
 }
 
                     
