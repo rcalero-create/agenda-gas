@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function crearTablaContactos() {
 
     // Borrar tabla en el caso que exista
-    let tabla = document.getElementById('tablaContactos');
-    if (tabla) tabla.remove();
+    eliminarTabla();
+
+    // Crearemos un icono de carga
+    crearLoaderAnillo('divContactos');
 
     // 2. Cridem a Google de manera segura
     google.script.run
@@ -66,11 +68,16 @@ function crearTablaContactosCorrectamente(obj) {
             // Mostrar notificación de ok
             crearNotificacionOk( 'Contenido obtenidos correctamente', 'Todo en orden');
 
+            // eliminaremos el loader
+            eliminarLoader();
+
         }
 
         function crearTablaContactosError() {
           // Mostrar notificación de error
           crearNotificacionError('No se ha encontrado los datos', 'ERROR');
+          // eliminaremos el loader
+          eliminarLoader();
 
         }
 
@@ -128,6 +135,46 @@ function crearTablaContactosCorrectamente(obj) {
         function crearColorNotificacion(color) {
           let elementoNotificacion = document.getElementById('notificacion');
           elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
+
+        }
+
+        function crearLoader(elementoPadre) {
+
+          eliminarLoader();
+          let loader = document.createElement('div');
+          loader.id = 'loader';
+          loader.appendChild(document.createElement('div'));
+          loader.appendChild(document.createElement('div'));
+          loader.appendChild(document.createElement('div'));
+          loader.appendChild(document.createElement('div'));
+          
+          return document.getElementById(elementoPadre).appendChild(loader);
+
+        }
+
+        function crearLoaderPuntos(elementoPadre) {
+          let loader = crearLoader(elementoPadre);
+          loader.classList.add('lds-ellipsis');
+
+        }
+
+        function crearLoaderAnillo(elementoPadre) {
+          let loader = crearLoader(elementoPadre);
+          loader.classList.add('lds-ring');
+          
+        }
+
+        function eliminarLoader() {
+          
+          let loader = document.getElementById('loader');
+          if(loader) loader.remove();
+
+        }
+
+        function eliminarTabla() {
+
+          let tabla = document.getElementById('tablaContactos');
+          if (tabla) tabla.remove();
 
         }
 

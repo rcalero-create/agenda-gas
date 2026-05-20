@@ -1,14 +1,33 @@
 <main>
-    <!-- Botones  -->
-    <div class="d-flex justify-content-center mb-4">
-        <button class="btn btn-success m-3" onclick="crearTablaContactos();">Mostrar contactos</button>
+    <!-- Formulario -->
+    <div class="d-flex justify-content-center my-3">
+        <form action="https://script.google.com/macros/s/AKfycbwsvIlkpYJMJ6NzDJRiVwsq_pVc2o2Zo87VjOC5UiVYM9KV5Yf7RB7tHz8l2HhckyhjHw/exec" method="post" id="formulario">
+        
+    
+    <div class="mb-3">
+
+      <label for="nombre" class="form label">Introduce el nombre del contacto</label>
+      <input type="text" class="form-control" name="nombre" id="nombre">
+
+    </div class="mb-3">
+
+    <div>
+
+      <label for="correo" class="form label">Introduce el correo del contacto</label>
+      <input type="email" class="form-control" name="correo" id="correo">
+
+    </div>
+
+      <!-- Botones  -->
+     <button type="button" class="btn btn-success m-3" onclick="crearTablaContactos();">Mostrar contactos</button>
+     <button type="submit" class="btn btn-primary">Crear contacto</button>
+
+    </form>
 
     </div>
 
     <!-- Tabla de contactos -->
-    <div class="container-sm mb-4 w-40" id="divContactos">
-
-    </div>
+    <div class="container col12 col-mg-6 mb-4 w-40 d-flex justify-content-center" id="divContactos"></div>
 
     <div>
 
