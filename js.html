@@ -179,4 +179,28 @@ function crearTablaContactosCorrectamente(obj) {
         }
 
         
+            const url = "https://script.google.com/macros/s/AKfycbwk99S3VuhaOwwFmuCug7_I6NmsBGZMWUvs8hn3hcVCeKWAZJNfflQLBgenOYCgHdSvGg/exec";
+
+            document.getElementById('formulario').addEventListener('submit', function(e) {
+                e.preventDefault(); // Evita que es recarregui la pàgina i demani accés
+
+                const datos = new FormData(this);
+
+                fetch(url, {
+                    method: 'POST',
+                    body: datos
+                })
+                .then(response => response.json())
+                .then(resultado => {
+                    console.log('Èxit:', resultado);
+                    if(resultado.status === "success") {
+                        alert("Contacte creat correctament!");
+                        document.getElementById('formulario').reset(); // Netegem el formulari
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+                    
 </script>
