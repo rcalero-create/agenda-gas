@@ -182,40 +182,37 @@ function crearTablaContactosCorrectamente(obj) {
         function enviarFormularioManual() {
     const formulario = document.getElementById('formulario');
     
-    // Mostrem el loader animat mentre es guarda el contacte (opcional i molt professional)
-    crearLoaderAnillo('divContactos');
-
     console.log("Enviant dades de forma nativa a través de Google...");
 
-    // Cridem directament la funció de Google Apps Script passant-li el formulari sencer
+    // Cridem directament la funció de Google Apps Script de forma neta
     google.script.run
         .withSuccessHandler(enviarFormularioCorrecto)
         .withFailureHandler(enviarFormularioError)
         .insertarContacto(formulario.nombre.value, formulario.correo.value);
 }
 
-// Funció que s'executa automàticament quan Google diu: "Guardat amb èxit!"
+// Funció que s'executa quan Google diu: "Dades rebudes!"
 function enviarFormularioCorrecto() {
-    console.log("Contacte inserit correctament a Google Sheets de manera nativa.");
+    console.log("Contacte inserit correctament a Google Sheets.");
     
-    eliminarLoader();
-    
-    // Fem servir el teu sistema de notificacions xulo de color verd!
+    // 1. Mostrem la teva notificació de color verd (Toast de Bootstrap)
     crearNotificacionOk('El contacte s\'ha guardat correctament.', '¡Todo en orden!');
     
-    // Netegem el formulari de la pantalla
+    // 2. Netegem el formulari de la pantalla instantàniament
     document.getElementById('formulario').reset();
     
-    // Actualitzem la taula automàticament perquè l'usuari vegi el nou contacte de cop
-    crearTablaContactos();
+    // AQUÍ JA NO HI HA CAP CRIDA A CREAR TAULES NI LOADERS. FI DE LA FUNCIÓ.
 }
 
-// Funció de seguretat per si falla la base de dades
+// Funció de seguretat per si falla la connexió
 function enviarFormularioError(error) {
     console.error("Error del servidor de Google:", error);
-    eliminarLoader();
     crearNotificacionError('No s\'ha pogut desar el contacte.', 'ERROR');
 }
+
+
+
+
 
                     
 </script>
