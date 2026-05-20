@@ -1,15 +1,48 @@
 <script>
 
-// 1. Esperem que TOTA la pàgina web estigui completament carregada i lesta
-document.addEventListener('DOMContentLoaded', function() {
-    // Espai reservat per a codi d'inici si cal
-});
+function insertarContacto() {
+
+    // Obtener datos
+    const formulario = document.getElementById('formulario');
+
+    // Crearemos un icono de carga
+    crearLoaderPuntos('divContactos');
+
+    // 2. Cridem a Google de manera segura
+    google.script.run
+        .withSuccessHandler(contactoInsertadoCorrectamente)
+        .withFailureHandler(contactoInsertadoError)
+        .insertarContacto(formulario.nombre.value, formulario.correo.value);
+}
+
+function contactoInsertadoCorrectamente() {
+    
+    // Eliminamos los datos de los inputs
+    document.getElementById('formulario').reset();
+
+    // Crear notificación
+    crearNotificacionOk('Contacto insertado correctamente', 'CONTACTO OK');
+
+    // eliminaremos el loader
+    eliminarLoader();
+
+}
+
+function contactoInsertadoError() {
+
+  crearNotificacionError('No se ha podido insertar el contacto', 'ERROR');
+
+  // eliminaremos el loader
+  eliminarLoader();
+}
 
 function crearTablaContactos() {
 
     // Borrar tabla en el caso que exista
-    let tabla = document.getElementById('tablaContactos');
-    if (tabla) tabla.remove();
+    eliminarTabla();
+
+    // Crearemos un icono de carga
+    crearLoaderAnillo('divContactos');
 
     // 2. Cridem a Google de manera segura
     google.script.run
@@ -66,11 +99,16 @@ function crearTablaContactosCorrectamente(obj) {
             // Mostrar notificación de ok
             crearNotificacionOk( 'Contenido obtenidos correctamente', 'Todo en orden');
 
+            // eliminaremos el loader
+            eliminarLoader();
+
         }
 
         function crearTablaContactosError() {
           // Mostrar notificación de error
           crearNotificacionError('No se ha encontrado los datos', 'ERROR');
+          // eliminaremos el loader
+          eliminarLoader();
 
         }
 
@@ -131,5 +169,86 @@ function crearTablaContactosCorrectamente(obj) {
 
         }
 
+        function crearLoader(elementoPadre) {
+
+          eliminarLoader();
+          let loader = document.createElement('div');
+          loader.id = 'loader';
+          loader.appendChild(document.createElement('div'));
+          loader.appendChild(document.createElement('div'));
+          loader.appendChild(document.createElement('div'));
+          loader.appendChild(document.createElement('div'));
+          
+          return document.getElementById(elementoPadre).appendChild(loader);
+
+        }
+
+        function crearLoaderPuntos(elementoPadre) {
+          let loader = crearLoader(elementoPadre);
+          loader.classList.add('lds-ellipsis');
+
+        }
+
+        function crearLoaderAnillo(elementoPadre) {
+          let loader = crearLoader(elementoPadre);
+          loader.classList.add('lds-ring');
+          
+        }
+
+        function eliminarLoader() {
+          
+          let loader = document.getElementById('loader');
+          if(loader) loader.remove();
+
+        }
+
+        function eliminarTabla() {
+
+          let tabla = document.getElementById('tablaContactos');
+          if (tabla) tabla.remove();
+
+        }
+
         
+//         function enviarFormularioManual() {
+//     const formulario = document.getElementById('formulario');
+    
+//     // CONTROL DE SEGURETAT EN LOCAL: Si estan buits, no enviem res a Google i avisem amb un Toast d'advertència
+//     if (!formulario.nombre.value.trim() || !formulario.correo.value.trim()) {
+//         crearNotificacionAdvertencia('Por favor, rellena todos los campos antes de enviar.', 'Camps buits');
+//         return; // Aturem l'execució immediatament aquí, evitant trucar a Google
+//     }
+    
+//     console.log("Enviant dades de forma nativa a través de Google...");
+
+//     google.script.run
+//         .withSuccessHandler(enviarFormularioCorrecto)
+//         .withFailureHandler(enviarFormularioError)
+//         .insertarContacto(formulario.nombre.value, formulario.correo.value);
+// }
+
+// // Funció que s'executa quan Google diu: "Dades rebudes!"
+// function enviarFormularioCorrecto() {
+//     console.log("Contacte inserit correctament a Google Sheets.");
+    
+//     // 1. Mostrem la teva notificació de color verd (Toast de Bootstrap)
+//     crearNotificacionOk('El contacte s\'ha guardat correctament.', '¡Todo en orden!');
+    
+//     // 2. Netegem el formulari de la pantalla instantàniament
+//     document.getElementById('formulario').reset();
+    
+//     // AQUÍ JA NO HI HA CAP CRIDA A CREAR TAULES NI LOADERS. FI DE LA FUNCIÓ.
+// }
+
+// // Funció de seguretat per si falla la connexió
+// function enviarFormularioError(error) {
+//     console.error("Error del servidor de Google:", error);
+//     crearNotificacionError('No s\'ha pogut desar el contacte.', 'ERROR');
+// }
+
+
+
+
+
+                    
 </script>
