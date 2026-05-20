@@ -6,7 +6,6 @@ function doGet() {
 
 function doPost(e) {
     
-    insertarContacto(e.parameter.nombre, e.parameter.correo);
     return HtmlService.createTemplateFromFile('web').evaluate().setTitle('Agenda Google Apps Script');
 }
 

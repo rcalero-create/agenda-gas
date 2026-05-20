@@ -5,6 +5,9 @@ function insertarContacto() {
     // Obtener datos
     const formulario = document.getElementById('formulario');
 
+    // Eliminamos tabla
+    eliminarTabla();
+
     // Crearemos un icono de carga
     crearLoaderPuntos('divContactos');
 
@@ -26,6 +29,9 @@ function contactoInsertadoCorrectamente() {
     // eliminaremos el loader
     eliminarLoader();
 
+    // Mostramos la tabla
+    crearTablaContactos();
+
 }
 
 function contactoInsertadoError() {
@@ -34,6 +40,10 @@ function contactoInsertadoError() {
 
   // eliminaremos el loader
   eliminarLoader();
+
+  // Mostramos la tabla
+    crearTablaContactos();
+    
 }
 
 function crearTablaContactos() {
