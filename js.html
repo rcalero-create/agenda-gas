@@ -179,28 +179,30 @@ function crearTablaContactosCorrectamente(obj) {
         }
 
         
-            const url = "https://script.google.com/macros/s/AKfycbwdQv5SttfdZG0pHnmFL3-rK_kxlqGOh-ONDh867DEWwma8MgO7wOviCYTmWNbKEcuC/exec";
+        function enviarFormularioManual() {
+        // Recorda posar el TEU enllaç correcte de Google Apps Script aquí sota:
+        const url = "https://script.google.com/macros/s/AKfycbwsvIlkpYJMJ6NzDJRiVwsq_pVc2o2Zo87VjOC5UiVYM9KV5Yf7RB7tHz8l2HhckyhjHw/exec";
+        
+        const formulario = document.getElementById('formulario');
+        const datos = new FormData(formulario);
 
-            document.getElementById('formulario').addEventListener('submit', function(e) {
-                e.preventDefault(); // Evita que es recarregui la pàgina i demani accés
+        console.log("Enviant dades de fons...");
 
-                const datos = new FormData(this);
+        fetch(url, {
+            method: 'POST',
+            body: datos
+        })
+        .then(response => response.json())
+        .then(resultado => {
+            console.log('Èxit des del servidor de Google:', resultado);
+            alert("¡Contacte creat correctament al Google Sheets!");
+            formulario.reset(); // Netegem els camps del formulari
+        })
+        .catch(error => {
+            console.error('Error en l\'enviament:', error);
+            alert("S'ha produït un error de connexió.");
+        });
+}
 
-                fetch(url, {
-                    method: 'POST',
-                    body: datos
-                })
-                .then(response => response.json())
-                .then(resultado => {
-                    console.log('Èxit:', resultado);
-                    if(resultado.status === "success") {
-                        alert("Contacte creat correctament!");
-                        document.getElementById('formulario').reset(); // Netegem el formulari
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            });
                     
 </script>
