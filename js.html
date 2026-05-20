@@ -180,30 +180,41 @@ function crearTablaContactosCorrectamente(obj) {
 
         
         function enviarFormularioManual() {
-    const url = "https://script.google.com/macros/s/AKfycbwsvIlkpYJMJ6NzDJRiVwsq_pVc2o2Zo87VjOC5UiVYM9KV5Yf7RB7tHz8l2HhckyhjHw/exec";
-    
     const formulario = document.getElementById('formulario');
-    const datos = new FormData(formulario);
+    
+    // Mostrem el loader animat mentre es guarda el contacte (opcional i molt professional)
+    crearLoaderAnillo('divContactos');
 
-    console.log("Enviant dades en mode segur...");
+    console.log("Enviant dades de forma nativa a través de Google...");
 
-    // Enviem usant mode: 'no-cors' per saltar-nos les restriccions del navegador
-    fetch(url, {
-        method: 'POST',
-        body: datos,
-        mode: 'no-cors' // <--- AIXÒ ÉS EL QUE SOLUCIONA ELS DOS ERRORS DE LA CONSOLA
-    })
-    .then(response => {
-        // En mode 'no-cors', la resposta de Google arriba "opaca" (buda), 
-        // però el fet que arribi aquí significa que s'ha enviat correctament!
-        console.log('Dades enviades amb èxit cap a Google Sheets.');
-        alert("¡Contacte creat correctament!");
-        formulario.reset(); // Netegem els camps de l'agenda
-    })
-    .catch(error => {
-        console.error('Error real en l\'enviament:', error);
-        alert("Hi ha hagut un problema de connexió.");
-    });
+    // Cridem directament la funció de Google Apps Script passant-li el formulari sencer
+    google.script.run
+        .withSuccessHandler(enviarFormularioCorrecto)
+        .withFailureHandler(enviarFormularioError)
+        .insertarContacto(formulario.nombre.value, formulario.correo.value);
+}
+
+// Funció que s'executa automàticament quan Google diu: "Guardat amb èxit!"
+function enviarFormularioCorrecto() {
+    console.log("Contacte inserit correctament a Google Sheets de manera nativa.");
+    
+    eliminarLoader();
+    
+    // Fem servir el teu sistema de notificacions xulo de color verd!
+    crearNotificacionOk('El contacte s\'ha guardat correctament.', '¡Todo en orden!');
+    
+    // Netegem el formulari de la pantalla
+    document.getElementById('formulario').reset();
+    
+    // Actualitzem la taula automàticament perquè l'usuari vegi el nou contacte de cop
+    crearTablaContactos();
+}
+
+// Funció de seguretat per si falla la base de dades
+function enviarFormularioError(error) {
+    console.error("Error del servidor de Google:", error);
+    eliminarLoader();
+    crearNotificacionError('No s\'ha pogut desar el contacte.', 'ERROR');
 }
 
                     
