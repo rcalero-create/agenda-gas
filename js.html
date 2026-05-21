@@ -1,21 +1,45 @@
 <script>
+  
+function insertarContacto(event) {
+    // 1. Evitamos que el formulario recargue la página o se cierre por defecto
+    event.preventDefault();
 
-function insertarContacto() {
-
-    // Obtener datos
+    // 2. Obtenemos el formulario
     const formulario = document.getElementById('formulario');
 
-    // Eliminamos tabla
+    // 3. ¡VALIDACIÓN! Si el formulario NO es válido (campos vacíos, teléfono mal, etc.)
+    if (!formulario.checkValidity()) {
+        formulario.reportValidity(); // El navegador muestra los globos de error nativos
+        return;                      // Detenemos la función aquí, NO se envía nada a Google
+    }
+
+    // 4. Si el código pasa de aquí, significa que todo está RELLENADO y CORRECTO
+    const modalElement = document.getElementById('crearContactoModal');
+    
+    if (modalElement) {
+        let modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(modalElement);
+        }
+        modalInstance.hide(); // Cerramos el modal de forma segura
+    } else {
+        console.warn("No se encontró ningún elemento con el ID 'crearContactoModal'");
+    }
+
+    // Ejecutamos lo visual
     eliminarTabla();
+    crearLoaderAnillo('divContactos');
 
-    // Crearemos un icono de carga
-    crearLoaderPuntos('divContactos');
-
-    // 2. Cridem a Google de manera segura
+    // 5. Enviamos los datos limpios a Google Sheets
     google.script.run
         .withSuccessHandler(contactoInsertadoCorrectamente)
         .withFailureHandler(contactoInsertadoError)
-        .insertarContacto(formulario.nombre.value, formulario.correo.value);
+        .insertarContacto(
+            formulario.nombre.value, 
+            formulario.apellidos.value, 
+            formulario.correo.value, 
+            formulario.telefono.value
+        );
 }
 
 function contactoInsertadoCorrectamente() {
@@ -42,7 +66,7 @@ function contactoInsertadoError() {
   eliminarLoader();
 
   // Mostramos la tabla
-    crearTablaContactos();
+  crearTablaContactos();
     
 }
 
@@ -82,11 +106,21 @@ function crearTablaContactosCorrectamente(obj) {
 
             // Header de la tabla (Fila 0)
             let primeraFila = document.createElement('tr');
+
+            // Columnas de la tabla
             for (let i = 0; i < obj[0].length; i++) {
                 let celda = document.createElement('th'); // Canviat a 'th' perquè quedi com a capçalera real
                 celda.textContent = obj[0][i];
                 primeraFila.appendChild(celda);
             }
+
+            // Añadimos una columna extra al header para el botón de eliminar
+            let celdaOpciones = document.createElement('th');
+            celdaOpciones.textContent = 'OPCIONES'; // Título de la columna de opciones
+            celdaOpciones.classList.add('text-center');
+
+            // Añadimos la celda de eliminar al header y luego el header a la tabla
+            primeraFila.appendChild(celdaOpciones);
             tablaHeader.appendChild(primeraFila); 
             tabla.appendChild(tablaHeader);
 
@@ -98,6 +132,10 @@ function crearTablaContactosCorrectamente(obj) {
                     celda.textContent = obj[i][j];
                     fila.appendChild(celda);
                 }
+
+                // Añadimos una celda con un botón de eliminar y otro de modificar en cada fila
+                // Añadimos las celdas de eliminar y modificar pasándole la fila directamente
+                fila.appendChild(crearCeldaBotones(i + 1));
                 tablaBody.appendChild(fila);
             } 
 
@@ -112,74 +150,145 @@ function crearTablaContactosCorrectamente(obj) {
             // eliminaremos el loader
             eliminarLoader();
 
-        }
+}
 
-        function crearTablaContactosError() {
+// Añadimos 'fila' como segundo parámetro
+function crearCeldaBotones(numFila) {
+
+    // Crear celda
+    let celda = document.createElement('td');
+    
+
+    // Botón eliminar
+    let botonEliminar = document.createElement('button');
+    botonEliminar.classList.add('text-center', 'btn', 'btn-danger', 'btn-sm', 'm-1');
+    botonEliminar.onclick = () => borrarContacto(numFila);
+    celda.appendChild(botonEliminar);
+
+    // Icono eliminar
+    let iconoEliminar = document.createElement('i');
+    iconoEliminar.classList.add('bi', 'bi-trash');
+    botonEliminar.appendChild(iconoEliminar);
+    
+
+    // Botón modificar
+    let botonModificar = document.createElement('button');
+    botonModificar.classList.add('text-center', 'btn', 'btn-warning', 'btn-sm', 'm-1');
+    celda.appendChild(botonModificar);
+
+    // Icono modificar
+    let iconoModificar = document.createElement('i');
+    iconoModificar.classList.add('bi', 'bi-pencil');
+    botonModificar.appendChild(iconoModificar);
+    
+    // Devolvemos la celda con los dos botones dentro
+    return celda;
+}
+
+function borrarContacto(filaIndex) {
+            
+     // Ejecutamos lo visual
+    eliminarTabla();
+    crearLoaderAnillo('divContactos');
+
+    // 5. Enviamos los datos limpios a Google Sheets
+    google.script.run
+        .withSuccessHandler(contactoBorradoCorrectamente)
+        .withFailureHandler(contactoBorradoError)
+        .borrarContacto(filaIndex);
+}
+
+function contactoBorradoCorrectamente() {
+    
+          // Crear notificación
+          crearNotificacionOk('Contacto borrado correctamente', 'CONTACTO BORRADO');
+
+          // eliminaremos el loader
+          eliminarLoader();
+
+          // Mostramos la tabla
+          crearTablaContactos();
+
+}
+
+function contactoBorradoError() {
+
+          crearNotificacionError('No se ha podido borrar el contacto', 'ERROR');
+
+          // eliminaremos el loader
+          eliminarLoader();
+
+          // Mostramos la tabla
+          crearTablaContactos();
+            
+}
+
+function crearTablaContactosError() {
           // Mostrar notificación de error
           crearNotificacionError('No se ha encontrado los datos', 'ERROR');
           // eliminaremos el loader
           eliminarLoader();
 
-        }
+}
 
-        function crearNotificacion(mensaje, titulo) {
+function crearNotificacion(mensaje, titulo) {
 
           document.getElementById('mensajeNotificacion').textContent = mensaje;
           document.getElementById('tituloNotificacion').textContent = titulo;
           let elementoNotificacion = document.getElementById('notificacion');
           bootstrap.Toast.getOrCreateInstance(elementoNotificacion).show();
 
-        }
+}
 
-        function crearNotificacionOk(mensaje,titulo) {
+function crearNotificacionOk(mensaje,titulo) {
 
           crearNotificacion(mensaje, titulo);
           crearIconoNotificacionOk();
           crearColorNotificacion('--color-verde-oscuro');
 
-        }
+}
 
-        function crearNotificacionError(mensaje,titulo) {
+function crearNotificacionError(mensaje,titulo) {
 
           crearNotificacion(mensaje, titulo);
           crearIconoNotificacionError();
           crearColorNotificacion('--color-rojo-oscuro');
           
-        }
+}
 
-        function crearNotificacionAdvertencia(mensaje,titulo) {
+function crearNotificacionAdvertencia(mensaje,titulo) {
 
           crearNotificacion(mensaje, titulo);
           crearIconoNotificacionAdvertencia();
           crearColorNotificacion('--color-amarillo-oscuro');
 
-        }
+}
 
-        function crearIconoNotificacionOk() {
+function crearIconoNotificacionOk() {
           document.getElementById('iconoNotificacion').className = '';             
           document.getElementById('iconoNotificacion').classList.add('bi', 'bi-check2-square');
 
-        }
+}
 
-        function crearIconoNotificacionError() {
+function crearIconoNotificacionError() {
           document.getElementById('iconoNotificacion').className = '';             
           document.getElementById('iconoNotificacion').classList.add('bi', 'bi-bug');
           
-        }
+}
 
-        function crearIconoNotificacionAdvertencia() {
+function crearIconoNotificacionAdvertencia() {
           document.getElementById('iconoNotificacion').className = '';             
           document.getElementById('iconoNotificacion').classList.add('bi', 'bi-exclamation-triangle');
           
-        }
+}
 
-        function crearColorNotificacion(color) {
+function crearColorNotificacion(color) {
           let elementoNotificacion = document.getElementById('notificacion');
           elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
 
-        }
+}
 
-        function crearLoader(elementoPadre) {
+function crearLoader(elementoPadre) {
 
           eliminarLoader();
           let loader = document.createElement('div');
@@ -191,36 +300,35 @@ function crearTablaContactosCorrectamente(obj) {
           
           return document.getElementById(elementoPadre).appendChild(loader);
 
-        }
+}
 
-        function crearLoaderPuntos(elementoPadre) {
+function crearLoaderPuntos(elementoPadre) {
           let loader = crearLoader(elementoPadre);
           loader.classList.add('lds-ellipsis');
 
-        }
+}
 
-        function crearLoaderAnillo(elementoPadre) {
+function crearLoaderAnillo(elementoPadre) {
           let loader = crearLoader(elementoPadre);
           loader.classList.add('lds-ring');
           
-        }
+}
 
-        function eliminarLoader() {
+function eliminarLoader() {
           
           let loader = document.getElementById('loader');
           if(loader) loader.remove();
 
-        }
+}
 
-        function eliminarTabla() {
+function eliminarTabla() {
 
           let tabla = document.getElementById('tablaContactos');
           if (tabla) tabla.remove();
 
-        }
+}
 
         
-<<<<<<< HEAD
 //         function enviarFormularioManual() {
 //     const formulario = document.getElementById('formulario');
     
@@ -256,43 +364,6 @@ function crearTablaContactosCorrectamente(obj) {
 //     console.error("Error del servidor de Google:", error);
 //     crearNotificacionError('No s\'ha pogut desar el contacte.', 'ERROR');
 // }
-=======
-        function enviarFormularioManual() {
-    const formulario = document.getElementById('formulario');
-    
-    // CONTROL DE SEGURETAT EN LOCAL: Si estan buits, no enviem res a Google i avisem amb un Toast d'advertència
-    if (!formulario.nombre.value.trim() || !formulario.correo.value.trim()) {
-        crearNotificacionAdvertencia('Por favor, rellena todos los campos antes de enviar.', 'Camps buits');
-        return; // Aturem l'execució immediatament aquí, evitant trucar a Google
-    }
-    
-    console.log("Enviant dades de forma nativa a través de Google...");
-
-    google.script.run
-        .withSuccessHandler(enviarFormularioCorrecto)
-        .withFailureHandler(enviarFormularioError)
-        .insertarContacto(formulario.nombre.value, formulario.correo.value);
-}
-
-// Funció que s'executa quan Google diu: "Dades rebudes!"
-function enviarFormularioCorrecto() {
-    console.log("Contacte inserit correctament a Google Sheets.");
-    
-    // 1. Mostrem la teva notificació de color verd (Toast de Bootstrap)
-    crearNotificacionOk('El contacte s\'ha guardat correctament.', '¡Todo en orden!');
-    
-    // 2. Netegem el formulari de la pantalla instantàniament
-    document.getElementById('formulario').reset();
-    
-    // AQUÍ JA NO HI HA CAP CRIDA A CREAR TAULES NI LOADERS. FI DE LA FUNCIÓ.
-}
-
-// Funció de seguretat per si falla la connexió
-function enviarFormularioError(error) {
-    console.error("Error del servidor de Google:", error);
-    crearNotificacionError('No s\'ha pogut desar el contacte.', 'ERROR');
-}
->>>>>>> c026d02b80f0f734299b9919881abd50da96e098
 
 
 
