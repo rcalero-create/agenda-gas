@@ -1,24 +1,45 @@
 <script>
+  
+  function insertarContacto(event) {
+    // 1. Evitamos que el formulario recargue la página o se cierre por defecto
+    event.preventDefault();
 
-function insertarContacto() {
-
-    // Obtener datos
+    // 2. Obtenemos el formulario
     const formulario = document.getElementById('formulario');
 
-    // Cerrar modal de forma nativa
-    bootstrap.Modal.getInstance(document.getElementById('crearContactoModal')).hide();
+    // 3. ¡VALIDACIÓN! Si el formulario NO es válido (campos vacíos, teléfono mal, etc.)
+    if (!formulario.checkValidity()) {
+        formulario.reportValidity(); // El navegador muestra los globos de error nativos
+        return;                      // Detenemos la función aquí, NO se envía nada a Google
+    }
 
-    // Eliminamos tabla
+    // 4. Si el código pasa de aquí, significa que todo está RELLENADO y CORRECTO
+    const modalElement = document.getElementById('crearContactoModal');
+    
+    if (modalElement) {
+        let modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(modalElement);
+        }
+        modalInstance.hide(); // Cerramos el modal de forma segura
+    } else {
+        console.warn("No se encontró ningún elemento con el ID 'crearContactoModal'");
+    }
+
+    // Ejecutamos lo visual
     eliminarTabla();
-
-    // Crearemos un icono de carga
     crearLoaderPuntos('divContactos');
 
-    // 2. Cridem a Google de manera segura
+    // 5. Enviamos los datos limpios a Google Sheets
     google.script.run
         .withSuccessHandler(contactoInsertadoCorrectamente)
         .withFailureHandler(contactoInsertadoError)
-        .insertarContacto(formulario.nombre.value, formulario.correo.value);
+        .insertarContacto(
+            formulario.nombre.value, 
+            formulario.apellidos.value, 
+            formulario.correo.value, 
+            formulario.telefono.value
+        );
 }
 
 function contactoInsertadoCorrectamente() {
