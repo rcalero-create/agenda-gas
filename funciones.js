@@ -26,3 +26,9 @@ function insertarContacto(nombre, apellidos, correo, telefono) {
 function borrarContacto(filaIndex) {
   HOJA.deleteRow(filaIndex);
 }
+
+function modificarContacto(numFila, datos) {
+
+  let celdas = HOJA.getRange('A' + numFila + ':D' + numFila);
+  celdas.setValues([[datos.nombre, datos.apellidos, datos.correo, datos.telefono]]);
+}
