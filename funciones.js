@@ -3,24 +3,10 @@ const HOJA = SpreadsheetApp.openById('1r55A61lVoehpus_gCA816qCOdsRo3k2_045fTbgeu
 function doGet() {
     return HtmlService.createTemplateFromFile('web').evaluate().setTitle('Agenda Google Apps Script');
 }
-// EL NOU doPOST: Ara rep els canvis del fetch i respon correctament en JSON
+
 function doPost(e) {
-    try {
-        // Llegim les dades que venen del FormData de la web
-        const nombre = e.parameter.nombre;
-        const correo = e.parameter.correo;
-        
-        // Insertem a la fila
-        insertarContacto(nombre, correo);
-        
-        // Respondre èxit en format JSON (Això evita que demani permisos o obri finestres)
-        return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Contacto insertado correctamente" }))
-                             .setMimeType(ContentService.MimeType.JSON);
-                             
-    } catch(error) {
-        return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-                             .setMimeType(ContentService.MimeType.JSON);
-    }
+    
+    return HtmlService.createTemplateFromFile('web').evaluate().setTitle('Agenda Google Apps Script');
 }
 
 function obtenerDatosHtml(nombre) {
@@ -28,18 +14,11 @@ function obtenerDatosHtml(nombre) {
 }
 
 function obtenerContactos() {
-  try {
+  
     return HOJA.getDataRange().getDisplayValues();
-  } catch(error) {
-    return [];
-  }
+  
 }
 
-// Net i sense col·lisions: l'únic que fa és afegir la fila i punt
 function insertarContacto(nombre, correo) {
   HOJA.appendRow([nombre, correo]);
-}
-
-function insertarContacto(nombre, correo) {
-    HOJA.appendRow([nombre, correo]);
 }
