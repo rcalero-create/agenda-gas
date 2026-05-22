@@ -364,138 +364,41 @@ function eliminarTabla() {
 
 }
 
-// 
-// N O T I F I C A C I O N E S
-// 
+function importarContactos() {
+    // 1. Limpiamos la zona visual y ponemos el cargador
+    eliminarTabla();
+    crearLoaderAnillo('divContactos');
 
-const ICONO_CHECK = 'bi-check-circle';
-const ICONO_ERROR = 'bi-x-circle';
-const ICONO_CONTACTO = 'bi-person-lines-fill';
-const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
-const ICONO_PAPELERA = 'bi-trash';
-
-const LOTTIE_CHECK = 'https://assets3.lottiefiles.com/private_files/lf30_dfspihm8.json';
-const LOTTIE_ERROR = 'https://assets10.lottiefiles.com/packages/lf20_yw3nyrsv.json';
-const LOTTIE_CONTACTO = 'https://assets1.lottiefiles.com/packages/lf20_sOjs8q/add_contact_05.json';
-const LOTTIE_ADVERTENCIA = 'https://assets2.lottiefiles.com/packages/lf20_qbuxqwzg.json';
-const LOTTIE_PAPELERA = 'https://assets8.lottiefiles.com/packages/lf20_WcyRdM.json';
-
-function crearNotificacionOk(mensaje, titulo) {
-
-    crearNotificacion(titulo, mensaje, LOTTIE_CHECK, 'color-verde-oscuro');
-
-}
-function crearNotificacionError(mensaje, titulo) {
-    
-    crearNotificacion(titulo, mensaje, LOTTIE_ERROR, 'color-rojo-oscuro');
-} 
-
-function crearNotificacionContacto(mensaje, titulo) {
-
-    crearNotificacion(titulo, mensaje, LOTTIE_CONTACTO, 'color-azul-oscuro');
-
-}   
-
-function crearNotificacionAdvertencia(mensaje, titulo) {
-
-    crearNotificacion(titulo, mensaje, LOTTIE_ADVERTENCIA, 'color-amarillo-oscuro');
-
-}   
-
-function crearNotificacionEliminar(mensaje, titulo) {
-
-    crearNotificacion(titulo, mensaje, LOTTIE_PAPELERA, 'color-gris-oscuro');
-
-}   
-
-function crearNotificacion(titulo, mensaje, lottie, color){
-    let notificacion = crearAtributosNotificacion();
-    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, lottie);
-    let cuerpoNotificacion = crearCuerpoNotificacion(mensaje);
-
-    // Ajuntamos la cabecera y el cuerpo a la notificación
-    notificacion.appendChild(cabeceraNotificacion);
-    notificacion.appendChild(cuerpoNotificacion);
-
-    // CORREGIDO: Añadimos '--' dinámicamente para que lea bien la variable CSS del :root
-    const colorReal = getComputedStyle(document.documentElement).getPropertyValue('--' + color.trim());
-    if (colorReal) {
-        notificacion.style.setProperty('background-color', colorReal, 'important');
-    }
-
-    // EXTRA BUGFIX: Cambiado 'this.remove()' por 'notificacion.remove()' para evitar errores de contexto
-    notificacion.addEventListener('hidden.bs.toast', () => {
-        notificacion.remove();
-    });
-
-    // Finalmente, añadimos la notificación al contenedor y la mostramos
-    document.getElementById('contenedorNotificaciones').appendChild(notificacion);
-    bootstrap.Toast.getOrCreateInstance(notificacion).show();
+    // 2. Llamamos a Google de forma totalmente síncrona y segura
+    google.script.run
+        .withSuccessHandler(function(respuesta) {
+            // Si el servidor responde "OK", ejecutamos el éxito
+            if (respuesta === "OK") {
+                contactosImportadosCorrectamente();
+            } else {
+                // Por si el servidor devuelve otra cosa inesperada
+                contactosImportadosError("Respuesta inesperada del servidor");
+            }
+        })
+        .withFailureHandler(function(error) {
+            // Si el servidor explota, capturamos el texto del error real en lugar del 'Uncaught jt'
+            console.error("Error crítico en el servidor GS:", error);
+            contactosImportadosError(error);
+        })
+        .importarContactos(); // Ejecuta la función del funciones.gs
 }
 
-function crearCabeceraNotificacion(titulo, lottie) {
-
-    let cabeceraNotificacion = document.createElement('div');
-    cabeceraNotificacion.classList.add('toast-header', 'p-0');
-
-    // Creamos el icono pasándole el contenedor y el lottie que queremos mostrar
-    crearLottieNotificacion(cabeceraNotificacion, lottie);
-
-    // Creamos el título y lo añadimos a la cabecera
-    let tituloNotificacion = document.createElement('strong');
-    tituloNotificacion.classList.add('mx-2');
-    tituloNotificacion.textContent = titulo;
-    cabeceraNotificacion.appendChild(tituloNotificacion);
-
-    return cabeceraNotificacion;
-
+function contactosImportadosCorrectamente() {
+    eliminarLoader();
+    crearTablaContactos(); // Volvemos a dibujar la tabla actualizada con los 5 nuevos contactos
+    crearNotificacionOk('Se han agregado los contactos correctamente', '¡Éxito!');
 }
 
-function crearCuerpoNotificacion(mensaje) {
-
-    let cuerpoNotificacion = document.createElement('div');
-    cuerpoNotificacion.classList.add('toast-body');
-    cuerpoNotificacion.textContent = mensaje;
-
-    return cuerpoNotificacion;
-
+function contactosImportadosError(detalleError) {
+    eliminarLoader();
+    crearTablaContactos(); // Redibujamos la tabla vieja para que el usuario no vea la pantalla en blanco
+    crearNotificacionError('No se han podido importar los contactos: ' + (detalleError.message || detalleError), 'ERROR');
 }
 
-function crearIconoNotificacion(contenedor, icono) {
 
-    let divIcono = document.createElement('div');
-    let iconoNotificacion = document.createElement('i');
-    iconoNotificacion.classList.add('icono-notificacion', 'bi', icono);
-    divIcono.appendChild(iconoNotificacion);
-    
-
-    contenedor.appendChild(divIcono);
-}
-
-function crearLottieNotificacion(contenedor, lottie) {
-
-    let divIcono = document.createElement('div');
-    let iconoNotificacion = document.createElement('lottie-player');
-
-    // Establecer los atributos
-    iconoNotificacion.setAttribute('src', lottie);
-    iconoNotificacion.setAttribute('background', 'transparent');
-    iconoNotificacion.setAttribute('speed', '1');
-    iconoNotificacion.style.width = '3rem';
-    iconoNotificacion.style.height = '3rem';
-    iconoNotificacion.autoplay = true;
-    
-    divIcono.appendChild(iconoNotificacion);
-    contenedor.appendChild(divIcono);
-}
-
-function crearAtributosNotificacion() {
-
-    let notificacion = document.createElement('div');
-    notificacion.classList.add('toast', 'align-items-center', 'text-white', 'border-0');
-    notificacion.setAttribute('role', 'alert');
-    notificacion.setAttribute('aria-live', 'assertive');
-    notificacion.setAttribute('aria-atomic', 'true');
-    return notificacion;
-}
 </script>

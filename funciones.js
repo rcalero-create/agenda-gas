@@ -33,3 +33,22 @@ function modificarContacto(numFila, datos) {
   let celdas = HOJA.getRange('A' + numFila + ':D' + numFila);
   celdas.setValues([[datos.nombre, datos.apellidos, datos.correo, datos.telefono]]);
 }
+
+function importarContactos() {
+  let url = 'https://randomuser.me/api/?results=5&inc=name,email,phone';
+  let respuesta = UrlFetchApp.fetch(url).getContentText();
+  let datos = JSON.parse(respuesta);
+  
+  // CORREGIDO: Pasamos el contacto de forma explícita en el bucle
+  datos.results.forEach(contacto => insertarContactoJSON(contacto));
+}
+
+function insertarContactoJSON(contacto) {
+  // Añadimos seguridad con (?.) por si la API falla en algún campo
+  HOJA.appendRow([
+    contacto?.name?.first,
+    contacto?.name?.last,
+    contacto?.email,
+    contacto?.phone
+  ]);
+}

@@ -1,0 +1,115 @@
+<script>
+
+// 
+// N O T I F I C A C I O N E S
+// 
+
+const ICONO_CHECK = 'bi-check-circle';
+const ICONO_ERROR = 'bi-x-circle';
+const ICONO_CONTACTO = 'bi-person-lines-fill';
+const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
+const ICONO_PAPELERA = 'bi-trash';
+
+
+function crearNotificacionOk(mensaje, titulo) {
+
+    crearNotificacion(titulo, mensaje, ICONO_CHECK, 'color-verde-oscuro');
+
+}
+function crearNotificacionError(mensaje, titulo) {
+    
+    crearNotificacion(titulo, mensaje, ICONO_ERROR, 'color-rojo-oscuro');
+} 
+
+function crearNotificacionContacto(mensaje, titulo) {
+
+    crearNotificacion(titulo, mensaje, ICONO_CONTACTO, 'color-azul-oscuro');
+
+}   
+
+function crearNotificacionAdvertencia(mensaje, titulo) {
+
+    crearNotificacion(titulo, mensaje, ICONO_ADVERTENCIA, 'color-amarillo-oscuro');
+
+}   
+
+function crearNotificacionEliminar(mensaje, titulo) {
+
+    crearNotificacion(titulo, mensaje, ICONO_PAPELERA, 'color-gris-oscuro');
+
+}   
+
+function crearNotificacion(titulo, mensaje, icono, color){
+    let notificacion = crearAtributosNotificacion();
+    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, icono); 
+    let cuerpoNotificacion = crearCuerpoNotificacion(mensaje);
+
+    // Agregar cabecera y cuerpo
+    notificacion.appendChild(cabeceraNotificacion);
+    notificacion.appendChild(cuerpoNotificacion);
+
+    // Establecer color
+    notificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
+
+    // Evento
+    notificacion.addEventListener('hidden.bs.toast', () => {
+        notificacion.remove();
+    });
+
+    // Añadimos la notificación al HTML real de la pantalla
+    document.getElementById('contenedorNotificaciones').appendChild(notificacion);
+
+    // Instanciar y mostrar
+    bootstrap.Toast.getOrCreateInstance(notificacion).show();
+}
+
+function crearCabeceraNotificacion(titulo, icono) { 
+
+    // creamos cabecera
+    let cabeceraNotificacion = document.createElement('div');
+    cabeceraNotificacion.classList.add('toast-header', 'p-0'); // Añadimos un poco de padding
+
+    // Creamos el icono, pasando el contenedor
+    crearIconoNotificacion(cabeceraNotificacion, icono);
+
+    // Creamos el título y lo añadimos
+    let tituloNotificacion = document.createElement('strong');
+    tituloNotificacion.classList.add('mx-2');
+    tituloNotificacion.textContent = titulo;
+    cabeceraNotificacion.appendChild(tituloNotificacion);
+
+    return cabeceraNotificacion;
+}
+
+function crearCuerpoNotificacion(mensaje) {
+
+    let cuerpoNotificacion = document.createElement('div');
+    cuerpoNotificacion.classList.add('toast-body');
+    cuerpoNotificacion.textContent = mensaje;
+
+    return cuerpoNotificacion;
+
+}
+
+function crearIconoNotificacion(contenedor, icono) {
+
+    let divIcono = document.createElement('div');
+    let iconoNotificacion = document.createElement('i');
+    iconoNotificacion.classList.add('icono-notificacion', 'bi', icono);
+    divIcono.appendChild(iconoNotificacion);
+    
+
+    contenedor.appendChild(divIcono);
+}
+
+function crearAtributosNotificacion() {
+
+    let notificacion = document.createElement('div');
+    notificacion.classList.add('toast', 'align-items-center', 'text-white', 'border-0');
+    notificacion.setAttribute('role', 'alert');
+    notificacion.setAttribute('aria-live', 'assertive');
+    notificacion.setAttribute('aria-atomic', 'true');
+    return notificacion;
+}
+
+</script>

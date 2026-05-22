@@ -1,8 +1,8 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-<script src="https://unpkg.com/@dotlottie/player-component@2.7.1/dist/dotlottie-player.mjs" type="module"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
 
@@ -16,7 +16,6 @@
   --color-amarillo-claro:#F9E79F;
   --color-amarillo-oscuro:#D4AC0D;
   --color-gris-claro:#E5E7E9;
-  --color-gris-oscuro:#515A5A;
 }
 header {
     background-color: #eee;
@@ -34,14 +33,21 @@ header {
   transform: scale(1.2);
 }
 
+.div-notificacion{
+  z-index: 9999 !important;
+}
+
 .icono-notificacion{
   font-size: 1.5rem;
   padding: .5rem;
 }
 
-.div-notificaciones{
-  z-index: 11;
+body{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
+
 
 /* LOADER PUNTOS */
 
@@ -147,5 +153,18 @@ header {
   }
 }
 
+/* Forzar que cuando el Toast tenga la clase .show sea completamente opaco y visible */
+.toast.show {
+  display: flex !important;
+  opacity: 1 !important;
+  transition: opacity 0.15s linear;
+}
+
+/* Estilo opcional para que el texto de la cabecera del Toast sea legible sobre fondos oscuros */
+.toast-header {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  color: #212529 !important;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
 
 </style>
