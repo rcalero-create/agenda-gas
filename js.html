@@ -1,10 +1,6 @@
 <script>
   
-<<<<<<< HEAD
-  function insertarContacto(event) {
-=======
 function insertarContacto(event) {
->>>>>>> 5f35a1bad1e345bf291337a4e0f824925b82565d
     // 1. Evitamos que el formulario recargue la página o se cierre por defecto
     event.preventDefault();
 
@@ -32,11 +28,9 @@ function insertarContacto(event) {
 
     // Ejecutamos lo visual
     eliminarTabla();
-<<<<<<< HEAD
-    crearLoaderPuntos('divContactos');
-=======
+
     crearLoaderAnillo('divContactos');
->>>>>>> 5f35a1bad1e345bf291337a4e0f824925b82565d
+
 
     // 5. Enviamos los datos limpios a Google Sheets
     google.script.run
@@ -56,7 +50,7 @@ function contactoInsertadoCorrectamente() {
     document.getElementById('formulario').reset();
 
     // Crear notificación
-    crearNotificacionOk('Contacto insertado correctamente', 'CONTACTO OK');
+    crearNotificacionContacto('Contacto insertado correctamente', 'CONTACTO OK');
 
     // eliminaremos el loader
     eliminarLoader();
@@ -74,10 +68,9 @@ function contactoInsertadoError() {
   eliminarLoader();
 
   // Mostramos la tabla
-<<<<<<< HEAD
+
     crearTablaContactos();
-=======
-  crearTablaContactos();
+
     
 }
 
@@ -87,7 +80,7 @@ function contactoModificadoCorrectamente() {
     document.getElementById('formulario').reset();
 
     // Crear notificación
-    crearNotificacionOk('Contacto modificado correctamente', 'CONTACTO OK');
+    crearNotificacionContacto('Contacto modificado correctamente', 'CONTACTO OK');
 
     // eliminaremos el loader
     eliminarLoader();
@@ -106,7 +99,7 @@ function contactoModificadoError() {
 
   // Mostramos la tabla
   crearTablaContactos();
->>>>>>> 5f35a1bad1e345bf291337a4e0f824925b82565d
+
     
 }
 
@@ -239,19 +232,20 @@ function borrarContacto(filaIndex) {
         .borrarContacto(filaIndex);
 }
 
-function modificarContacto(filaIndex) {
-
+function modificarContacto(event, filaIndex) {
+    // 1. ¡Crucial! Evitamos que la página se recargue al modificar
+    if (event) event.preventDefault();
+    
     // Cerramos modal
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).hide();
     
-    // obtener nuevos datos a partir de lo modificado
     const formulario = document.getElementById('formulario');
 
     // Ejecutamos lo visual
     eliminarTabla();
     crearLoaderAnillo('divContactos');
 
-    // 5. Enviamos los datos limpios a Google Sheets
+    // Enviamos los datos limpios a Google Sheets
     google.script.run
         .withSuccessHandler(contactoModificadoCorrectamente)
         .withFailureHandler(contactoModificadoError)
@@ -264,60 +258,45 @@ function modificarContacto(filaIndex) {
 }
 
 function abrirModalCrearContacto() {
-
-    // Botón crear
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Crear contacto';
-    boton.classList = '';
-    boton.classList.add('btn', 'btn-success');
+    boton.className = 'btn btn-success';
 
-    // Cambiar titulo
     document.getElementById('tituloModal').textContent = 'Crear contacto';
 
-    // Modificar submit
-    document.getElementById('formulario').onsubmit = () => insertarContacto(e);
+    // CORREGIDO: Pasamos 'event' correctamente
+    document.getElementById('formulario').onsubmit = (event) => insertarContacto(event);
 
-    // obtener datos
     document.getElementById('nombre').value = '';
     document.getElementById('apellidos').value = '';
     document.getElementById('correo').value = '';
     document.getElementById('telefono').value = '';
 
-    // Abrimos modal
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
-
-
 }
 
 function abrirModalModificarContacto(filaIndex, datosContacto) {
-
-    // Botón modificar
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Modificar contacto';
-    boton.classList = '';
-    boton.classList.add('btn', 'btn-warning');
+    boton.className = 'btn btn-warning';
 
-    // Cambiar titulo
     document.getElementById('tituloModal').textContent = 'Modificar contacto';
 
-    // Modificar submit
-    document.getElementById('formulario').onsubmit = () => modificarContacto(filaIndex);
+    // CORREGIDO: Pasamos el 'event' para que modificarContacto pueda hacer el preventDefault()
+    document.getElementById('formulario').onsubmit = (event) => modificarContacto(event, filaIndex);
 
-    // obtener datos
     document.getElementById('nombre').value = datosContacto[0];
     document.getElementById('apellidos').value = datosContacto[1];
     document.getElementById('correo').value = datosContacto[2];
     document.getElementById('telefono').value = datosContacto[3];
 
-    // Abrimos modal
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
-
 }
 
 function contactoBorradoCorrectamente() {
     
           // Crear notificación
-          crearNotificacionOk('Contacto borrado correctamente', 'CONTACTO BORRADO');
+          crearNotificacionEliminar('Contacto borrado correctamente', 'CONTACTO BORRADO');
 
           // eliminaremos el loader
           eliminarLoader();
@@ -347,62 +326,6 @@ function crearTablaContactosError() {
 
 }
 
-function crearNotificacion(mensaje, titulo) {
-
-          document.getElementById('mensajeNotificacion').textContent = mensaje;
-          document.getElementById('tituloNotificacion').textContent = titulo;
-          let elementoNotificacion = document.getElementById('notificacion');
-          bootstrap.Toast.getOrCreateInstance(elementoNotificacion).show();
-
-}
-
-function crearNotificacionOk(mensaje,titulo) {
-
-          crearNotificacion(mensaje, titulo);
-          crearIconoNotificacionOk();
-          crearColorNotificacion('--color-verde-oscuro');
-
-}
-
-function crearNotificacionError(mensaje,titulo) {
-
-          crearNotificacion(mensaje, titulo);
-          crearIconoNotificacionError();
-          crearColorNotificacion('--color-rojo-oscuro');
-          
-}
-
-function crearNotificacionAdvertencia(mensaje,titulo) {
-
-          crearNotificacion(mensaje, titulo);
-          crearIconoNotificacionAdvertencia();
-          crearColorNotificacion('--color-amarillo-oscuro');
-
-}
-
-function crearIconoNotificacionOk() {
-          document.getElementById('iconoNotificacion').className = '';             
-          document.getElementById('iconoNotificacion').classList.add('bi', 'bi-check2-square');
-
-}
-
-function crearIconoNotificacionError() {
-          document.getElementById('iconoNotificacion').className = '';             
-          document.getElementById('iconoNotificacion').classList.add('bi', 'bi-bug');
-          
-}
-
-function crearIconoNotificacionAdvertencia() {
-          document.getElementById('iconoNotificacion').className = '';             
-          document.getElementById('iconoNotificacion').classList.add('bi', 'bi-exclamation-triangle');
-          
-}
-
-function crearColorNotificacion(color) {
-          let elementoNotificacion = document.getElementById('notificacion');
-          elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
-
-}
 
 function crearLoader(elementoPadre) {
 
@@ -444,46 +367,115 @@ function eliminarTabla() {
 
 }
 
-        
-//         function enviarFormularioManual() {
-//     const formulario = document.getElementById('formulario');
+// 
+// N O T I F I C A C I O N E S
+// 
+
+const ICONO_CHECK = 'bi-check-circle';
+const ICONO_ERROR = 'bi-x-circle';
+const ICONO_CONTACTO = 'bi-person-lines-fill';
+const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
+const ICONO_PAPELERA = 'bi-trash';
+
+function crearNotificacionOk(mensaje, titulo) {
+
+    crearNotificacion(titulo, mensaje, ICONO_CHECK, 'color-verde-oscuro');
+
+}
+function crearNotificacionError(mensaje, titulo) {
     
-//     // CONTROL DE SEGURETAT EN LOCAL: Si estan buits, no enviem res a Google i avisem amb un Toast d'advertència
-//     if (!formulario.nombre.value.trim() || !formulario.correo.value.trim()) {
-//         crearNotificacionAdvertencia('Por favor, rellena todos los campos antes de enviar.', 'Camps buits');
-//         return; // Aturem l'execució immediatament aquí, evitant trucar a Google
-//     }
-    
-//     console.log("Enviant dades de forma nativa a través de Google...");
+    crearNotificacion(titulo, mensaje, ICONO_ERROR, 'color-rojo-oscuro');
+} 
 
-//     google.script.run
-//         .withSuccessHandler(enviarFormularioCorrecto)
-//         .withFailureHandler(enviarFormularioError)
-//         .insertarContacto(formulario.nombre.value, formulario.correo.value);
-// }
+function crearNotificacionContacto(mensaje, titulo) {
 
-// // Funció que s'executa quan Google diu: "Dades rebudes!"
-// function enviarFormularioCorrecto() {
-//     console.log("Contacte inserit correctament a Google Sheets.");
-    
-//     // 1. Mostrem la teva notificació de color verd (Toast de Bootstrap)
-//     crearNotificacionOk('El contacte s\'ha guardat correctament.', '¡Todo en orden!');
-    
-//     // 2. Netegem el formulari de la pantalla instantàniament
-//     document.getElementById('formulario').reset();
-    
-//     // AQUÍ JA NO HI HA CAP CRIDA A CREAR TAULES NI LOADERS. FI DE LA FUNCIÓ.
-// }
+    crearNotificacion(titulo, mensaje, ICONO_CONTACTO, 'color-azul-oscuro');
 
-// // Funció de seguretat per si falla la connexió
-// function enviarFormularioError(error) {
-//     console.error("Error del servidor de Google:", error);
-//     crearNotificacionError('No s\'ha pogut desar el contacte.', 'ERROR');
-// }
+}   
 
+function crearNotificacionAdvertencia(mensaje, titulo) {
 
+    crearNotificacion(titulo, mensaje, ICONO_ADVERTENCIA, 'color-amarillo-oscuro');
 
+}   
 
+function crearNotificacionEliminar(mensaje, titulo) {
 
-                    
+    crearNotificacion(titulo, mensaje, ICONO_PAPELERA, 'color-gris-oscuro');
+
+}   
+
+function crearNotificacion(titulo, mensaje, icono, color){
+    let notificacion = crearAtributosNotificacion();
+    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, icono);
+    let cuerpoNotificacion = crearCuerpoNotificacion(mensaje);
+
+    // Ajuntamos la cabecera y el cuerpo a la notificación
+    notificacion.appendChild(cabeceraNotificacion);
+    notificacion.appendChild(cuerpoNotificacion);
+
+    // CORREGIDO: Añadimos '--' dinámicamente para que lea bien la variable CSS del :root
+    const colorReal = getComputedStyle(document.documentElement).getPropertyValue('--' + color.trim());
+    if (colorReal) {
+        notificacion.style.setProperty('background-color', colorReal, 'important');
+    }
+
+    // EXTRA BUGFIX: Cambiado 'this.remove()' por 'notificacion.remove()' para evitar errores de contexto
+    notificacion.addEventListener('hidden.bs.toast', () => {
+        notificacion.remove();
+    });
+
+    // Finalmente, añadimos la notificación al contenedor y la mostramos
+    document.getElementById('contenedorNotificaciones').appendChild(notificacion);
+    bootstrap.Toast.getOrCreateInstance(notificacion).show();
+}
+
+function crearCabeceraNotificacion(titulo, icono) {
+
+    let cabeceraNotificacion = document.createElement('div');
+    cabeceraNotificacion.classList.add('toast-header', 'p-0');
+
+    // Creamos el icono pasándole el contenedor y el icono que queremos mostrar
+    crearIconoNotificacion(cabeceraNotificacion, icono);
+
+    // Creamos el título y lo añadimos a la cabecera
+    let tituloNotificacion = document.createElement('strong');
+    tituloNotificacion.classList.add('mx-2');
+    tituloNotificacion.textContent = titulo;
+    cabeceraNotificacion.appendChild(tituloNotificacion);
+
+    return cabeceraNotificacion;
+
+}
+
+function crearCuerpoNotificacion(mensaje) {
+
+    let cuerpoNotificacion = document.createElement('div');
+    cuerpoNotificacion.classList.add('toast-body');
+    cuerpoNotificacion.textContent = mensaje;
+
+    return cuerpoNotificacion;
+
+}
+
+function crearIconoNotificacion(contenedor, icono) {
+
+    let divIcono = document.createElement('div');
+    let iconoNotificacion = document.createElement('i');
+    iconoNotificacion.classList.add('icono-notificacion');
+    iconoNotificacion.classList.add('bi', icono);
+    divIcono.appendChild(iconoNotificacion);
+    contenedor.appendChild(divIcono);
+
+}
+
+function crearAtributosNotificacion() {
+
+    let notificacion = document.createElement('div');
+    notificacion.classList.add('toast', 'align-items-center', 'text-white', 'border-0');
+    notificacion.setAttribute('role', 'alert');
+    notificacion.setAttribute('aria-live', 'assertive');
+    notificacion.setAttribute('aria-atomic', 'true');
+    return notificacion;
+}
 </script>
