@@ -41,25 +41,57 @@ function crearNotificacionEliminar(mensaje, titulo) {
 
 function crearNotificacion(titulo, mensaje, icono, color){
     let notificacion = crearAtributosNotificacion();
-    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, icono); 
+    
+    // 1. Creamos la cabecera (Le pasamos solo el título, el icono lo metemos después)
+    let cabeceraNotificacion = crearCabeceraNotificacion(titulo); 
     let cuerpoNotificacion = crearCuerpoNotificacion(mensaje);
 
-    // Agregar cabecera y cuerpo
+    // Agregar cabecera y cuerpo en memoria
     notificacion.appendChild(cabeceraNotificacion);
     notificacion.appendChild(cuerpoNotificacion);
 
-    // Establecer color
-    notificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
+    // 2. CORREGIDO: Establecer color buscando tus variables reales del :root CSS
+    // Ejemplo: Si le pasas 'verde-oscuro', buscará '--color-verde-oscuro'
+    try {
+        const nombreVariableCSS = '--color-' + color.trim().toLowerCase();
+        const colorReal = getComputedStyle(document.documentElement).getPropertyValue(nombreVariableCSS);
+        if (colorReal) {
+            notificacion.style.setProperty('background-color', colorReal, 'important');
+        }
+    } catch(e) {
+        console.warn("No se pudo aplicar el color CSS:", e);
+    }
 
-    // Evento
+    // Evento para limpiar la memoria al cerrarse
     notificacion.addEventListener('hidden.bs.toast', () => {
         notificacion.remove();
     });
 
-    // Añadimos la notificación al HTML real de la pantalla
-    document.getElementById('contenedorNotificaciones').appendChild(notificacion);
+    // 3. BLINDAJE: Buscamos el contenedor. Si no existe en el HTML, lo fabricamos en un segundo
+    let contenedor = document.getElementById('contenedorNotificaciones');
+    if (!contenedor) {
+        let divEnvoltorio = document.createElement('div');
+        divEnvoltorio.className = "div-notificacion position-fixed bottom-0 end-0 p-3";
+        divEnvoltorio.style.zIndex = "9999";
 
-    // Instanciar y mostrar
+        contenedor = document.createElement('div');
+        contenedor.id = "contenedorNotificaciones";
+        contenedor.className = "toast-container position-static";
+
+        divEnvoltorio.appendChild(contenedor);
+        document.body.appendChild(divEnvoltorio);
+    }
+
+    // 4. Añadimos la notificación al contenedor real de la pantalla
+    contenedor.appendChild(notificacion);
+
+    // 5. CORREGIDO: Ahora que ya existe en la pantalla, buscamos el hueco e inyectamos el icono <img>
+    let huecoIcono = notificacion.querySelector('.contenedor-lottie-temporal');
+    if (huecoIcono) {
+        crearLottieNotificacion(huecoIcono, icono);
+    }
+
+    // 6. Instanciar y mostrar con Bootstrap
     bootstrap.Toast.getOrCreateInstance(notificacion).show();
 }
 
