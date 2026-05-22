@@ -177,9 +177,6 @@ function crearTablaContactosCorrectamente(obj) {
             tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success', 'border-dark');
             document.getElementById('divContactos').appendChild(tabla);
 
-            // Mostrar notificación de ok
-            crearNotificacionOk( 'Contenido obtenidos correctamente', 'Todo en orden');
-
             // eliminaremos el loader
             eliminarLoader();
 
@@ -377,37 +374,43 @@ const ICONO_CONTACTO = 'bi-person-lines-fill';
 const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
 const ICONO_PAPELERA = 'bi-trash';
 
+const LOTTIE_CHECK = 'https://assets3.lottiefiles.com/private_files/lf30_dfspihm8.json';
+const LOTTIE_ERROR = 'https://assets10.lottiefiles.com/packages/lf20_yw3nyrsv.json';
+const LOTTIE_CONTACTO = 'https://assets1.lottiefiles.com/packages/lf20_sOjs8q/add_contact_05.json';
+const LOTTIE_ADVERTENCIA = 'https://assets2.lottiefiles.com/packages/lf20_qbuxqwzg.json';
+const LOTTIE_PAPELERA = 'https://assets8.lottiefiles.com/packages/lf20_WcyRdM.json';
+
 function crearNotificacionOk(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_CHECK, 'color-verde-oscuro');
+    crearNotificacion(titulo, mensaje, LOTTIE_CHECK, 'color-verde-oscuro');
 
 }
 function crearNotificacionError(mensaje, titulo) {
     
-    crearNotificacion(titulo, mensaje, ICONO_ERROR, 'color-rojo-oscuro');
+    crearNotificacion(titulo, mensaje, LOTTIE_ERROR, 'color-rojo-oscuro');
 } 
 
 function crearNotificacionContacto(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_CONTACTO, 'color-azul-oscuro');
+    crearNotificacion(titulo, mensaje, LOTTIE_CONTACTO, 'color-azul-oscuro');
 
 }   
 
 function crearNotificacionAdvertencia(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_ADVERTENCIA, 'color-amarillo-oscuro');
+    crearNotificacion(titulo, mensaje, LOTTIE_ADVERTENCIA, 'color-amarillo-oscuro');
 
 }   
 
 function crearNotificacionEliminar(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_PAPELERA, 'color-gris-oscuro');
+    crearNotificacion(titulo, mensaje, LOTTIE_PAPELERA, 'color-gris-oscuro');
 
 }   
 
-function crearNotificacion(titulo, mensaje, icono, color){
+function crearNotificacion(titulo, mensaje, lottie, color){
     let notificacion = crearAtributosNotificacion();
-    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, icono);
+    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, lottie);
     let cuerpoNotificacion = crearCuerpoNotificacion(mensaje);
 
     // Ajuntamos la cabecera y el cuerpo a la notificación
@@ -430,13 +433,13 @@ function crearNotificacion(titulo, mensaje, icono, color){
     bootstrap.Toast.getOrCreateInstance(notificacion).show();
 }
 
-function crearCabeceraNotificacion(titulo, icono) {
+function crearCabeceraNotificacion(titulo, lottie) {
 
     let cabeceraNotificacion = document.createElement('div');
     cabeceraNotificacion.classList.add('toast-header', 'p-0');
 
-    // Creamos el icono pasándole el contenedor y el icono que queremos mostrar
-    crearIconoNotificacion(cabeceraNotificacion, icono);
+    // Creamos el icono pasándole el contenedor y el lottie que queremos mostrar
+    crearLottieNotificacion(cabeceraNotificacion, lottie);
 
     // Creamos el título y lo añadimos a la cabecera
     let tituloNotificacion = document.createElement('strong');
@@ -462,11 +465,28 @@ function crearIconoNotificacion(contenedor, icono) {
 
     let divIcono = document.createElement('div');
     let iconoNotificacion = document.createElement('i');
-    iconoNotificacion.classList.add('icono-notificacion');
-    iconoNotificacion.classList.add('bi', icono);
+    iconoNotificacion.classList.add('icono-notificacion', 'bi', icono);
+    divIcono.appendChild(iconoNotificacion);
+    
+
+    contenedor.appendChild(divIcono);
+}
+
+function crearLottieNotificacion(contenedor, lottie) {
+
+    let divIcono = document.createElement('div');
+    let iconoNotificacion = document.createElement('lottie-player');
+
+    // Establecer los atributos
+    iconoNotificacion.setAttribute('src', lottie);
+    iconoNotificacion.setAttribute('background', 'transparent');
+    iconoNotificacion.setAttribute('speed', '1');
+    iconoNotificacion.style.width = '3rem';
+    iconoNotificacion.style.height = '3rem';
+    iconoNotificacion.autoplay = true;
+    
     divIcono.appendChild(iconoNotificacion);
     contenedor.appendChild(divIcono);
-
 }
 
 function crearAtributosNotificacion() {
