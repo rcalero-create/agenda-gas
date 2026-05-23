@@ -164,6 +164,17 @@ function crearTablaContactosCorrectamente(obj) {
                     let celda = document.createElement('td');
                     celda.textContent = obj[i][j];
                     fila.appendChild(celda);
+
+                    // si la columna es la E 
+                    if(j == 4) {
+
+                        // entonces creamos imagen
+                        celda.textContent = '';
+                        let imagen = document.createElement('img');
+                        imagen.classList.add('img-fluid','rounded');
+                        imagen.src = obj[i][j];
+                        celda.appendChild(imagen);
+                    }
                 }
 
                 // Añadimos una celda con un botón de eliminar y otro de modificar en cada fila
@@ -371,21 +382,9 @@ function importarContactos() {
 
     // 2. Llamamos a Google de forma totalmente síncrona y segura
     google.script.run
-        .withSuccessHandler(function(respuesta) {
-            // Si el servidor responde "OK", ejecutamos el éxito
-            if (respuesta === "OK") {
-                contactosImportadosCorrectamente();
-            } else {
-                // Por si el servidor devuelve otra cosa inesperada
-                contactosImportadosError("Respuesta inesperada del servidor");
-            }
-        })
-        .withFailureHandler(function(error) {
-            // Si el servidor explota, capturamos el texto del error real en lugar del 'Uncaught jt'
-            console.error("Error crítico en el servidor GS:", error);
-            contactosImportadosError(error);
-        })
-        .importarContactos(); // Ejecuta la función del funciones.gs
+    .withSuccessHandler(contactosImportadosCorrectamente)
+    .withFailureHandler(contactosImportadosError)
+      .importarContactos();
 }
 
 function contactosImportadosCorrectamente() {

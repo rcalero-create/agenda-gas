@@ -13,29 +13,29 @@ const ICONO_PAPELERA = 'bi-trash';
 
 function crearNotificacionOk(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_CHECK, 'color-verde-oscuro');
+    crearNotificacion(titulo, mensaje, ICONO_CHECK, 'verde-oscuro');
 
 }
 function crearNotificacionError(mensaje, titulo) {
     
-    crearNotificacion(titulo, mensaje, ICONO_ERROR, 'color-rojo-oscuro');
+    crearNotificacion(titulo, mensaje, ICONO_ERROR, 'rojo-oscuro');
 } 
 
 function crearNotificacionContacto(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_CONTACTO, 'color-azul-oscuro');
+    crearNotificacion(titulo, mensaje, ICONO_CONTACTO, 'azul-oscuro');
 
 }   
 
 function crearNotificacionAdvertencia(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_ADVERTENCIA, 'color-amarillo-oscuro');
+    crearNotificacion(titulo, mensaje, ICONO_ADVERTENCIA, 'amarillo-oscuro');
 
 }   
 
 function crearNotificacionEliminar(mensaje, titulo) {
 
-    crearNotificacion(titulo, mensaje, ICONO_PAPELERA, 'color-gris-oscuro');
+    crearNotificacion(titulo, mensaje, ICONO_PAPELERA, 'gris-oscuro');
 
 }   
 
@@ -43,7 +43,7 @@ function crearNotificacion(titulo, mensaje, icono, color){
     let notificacion = crearAtributosNotificacion();
     
     // 1. Creamos la cabecera (Le pasamos solo el título, el icono lo metemos después)
-    let cabeceraNotificacion = crearCabeceraNotificacion(titulo); 
+    let cabeceraNotificacion = crearCabeceraNotificacion(titulo, icono); 
     let cuerpoNotificacion = crearCuerpoNotificacion(mensaje);
 
     // Agregar cabecera y cuerpo en memoria
@@ -85,13 +85,7 @@ function crearNotificacion(titulo, mensaje, icono, color){
     // 4. Añadimos la notificación al contenedor real de la pantalla
     contenedor.appendChild(notificacion);
 
-    // 5. CORREGIDO: Ahora que ya existe en la pantalla, buscamos el hueco e inyectamos el icono <img>
-    let huecoIcono = notificacion.querySelector('.contenedor-lottie-temporal');
-    if (huecoIcono) {
-        crearLottieNotificacion(huecoIcono, icono);
-    }
-
-    // 6. Instanciar y mostrar con Bootstrap
+    // 5. Instanciar y mostrar con Bootstrap
     bootstrap.Toast.getOrCreateInstance(notificacion).show();
 }
 
