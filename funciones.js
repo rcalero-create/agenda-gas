@@ -50,6 +50,6 @@ function insertarContactoJSON(contacto) {
     contacto?.name?.last,
     contacto?.email,
     contacto?.phone,
-    contacto?.picture?.medium
+    contacto?.picture?.large
   ]);
 }

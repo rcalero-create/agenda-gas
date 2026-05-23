@@ -1,0 +1,39 @@
+<script>
+
+function abrirModalCrearContacto() {
+    let boton = document.getElementById('botonCrearModificar');
+    boton.textContent = 'Crear contacto';
+    boton.className = 'btn btn-success';
+
+    document.getElementById('tituloModal').textContent = 'Crear contacto';
+
+    // CORREGIDO: Pasamos 'event' correctamente
+    document.getElementById('formulario').onsubmit = (event) => insertarContacto(event);
+
+    document.getElementById('nombre').value = '';
+    document.getElementById('apellidos').value = '';
+    document.getElementById('correo').value = '';
+    document.getElementById('telefono').value = '';
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
+}
+
+function abrirModalModificarContacto(filaIndex, datosContacto) {
+    let boton = document.getElementById('botonCrearModificar');
+    boton.textContent = 'Modificar contacto';
+    boton.className = 'btn btn-warning';
+
+    document.getElementById('tituloModal').textContent = 'Modificar contacto';
+
+    // CORREGIDO: Pasamos el 'event' para que modificarContacto pueda hacer el preventDefault()
+    document.getElementById('formulario').onsubmit = (event) => modificarContacto(event, filaIndex);
+    // Obtener datos
+    document.getElementById('nombre').value = datosContacto.nombre;
+    document.getElementById('apellidos').value = datosContacto.apellidos;
+    document.getElementById('correo').value = datosContacto.correo;
+    document.getElementById('telefono').value = datosContacto.telefono;
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
+}
+
+</script>
