@@ -13,7 +13,7 @@ function obtenerDatosHtml(nombre) {
     return HtmlService.createHtmlOutputFromFile(nombre).getContent();
 }
 
-function obtenerContactos() {
+function obtenerDatos() {
   
     return HOJA.getDataRange().getDisplayValues();
   

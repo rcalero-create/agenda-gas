@@ -1,14 +1,18 @@
 <script>
 
 function abrirModalCrearContacto() {
+
+    // boton crear
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Crear contacto';
-    boton.className = 'btn btn-success';
+    boton.className = '';
+    boton.classList.add('btn', 'btn-success');
 
+    // cambiar título
     document.getElementById('tituloModal').textContent = 'Crear contacto';
 
-    // CORREGIDO: Pasamos 'event' correctamente
-    document.getElementById('formulario').onsubmit = (event) => insertarContacto(event);
+    // cambiar submit
+    document.getElementById('formulario').onsubmit = () => insertarContacto();
 
     document.getElementById('nombre').value = '';
     document.getElementById('apellidos').value = '';
@@ -18,21 +22,29 @@ function abrirModalCrearContacto() {
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
 }
 
-function abrirModalModificarContacto(filaIndex, datosContacto) {
+function abrirModalModificarContacto(contacto) {
+        
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Modificar contacto';
-    boton.className = 'btn btn-warning';
+    boton.className = '';
+    boton.classList.add('btn','btn-warning');
 
+    // cambiar título
     document.getElementById('tituloModal').textContent = 'Modificar contacto';
 
-    // CORREGIDO: Pasamos el 'event' para que modificarContacto pueda hacer el preventDefault()
-    document.getElementById('formulario').onsubmit = (event) => modificarContacto(event, filaIndex);
+    // modificar submit
+    document.getElementById('formulario').onsubmit = (event) => {
+      event.preventDefault();
+      modificarContacto(contacto.fila);
+      }
+   
     // Obtener datos
-    document.getElementById('nombre').value = datosContacto.nombre;
-    document.getElementById('apellidos').value = datosContacto.apellidos;
-    document.getElementById('correo').value = datosContacto.correo;
-    document.getElementById('telefono').value = datosContacto.telefono;
+    document.getElementById('nombre').value = contacto.nombre;
+    document.getElementById('apellidos').value = contacto.apellidos;
+    document.getElementById('correo').value = contacto.correo;
+    document.getElementById('telefono').value = contacto.telefono;
 
+    // abrir modal
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
 }
 
