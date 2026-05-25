@@ -1,7 +1,9 @@
 <script>
 
-function abrirModalCrearContacto() {
+const IMAGEN_PERFIL_INICIO = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cccccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
 
+
+function abrirModalCrearContacto() {
     // boton crear
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Crear contacto';
@@ -11,19 +13,20 @@ function abrirModalCrearContacto() {
     // cambiar título
     document.getElementById('tituloModal').textContent = 'Crear contacto';
 
-    // cambiar submit
-    document.getElementById('formulario').onsubmit = () => insertarContacto();
+    // CORREGIDO: Capturamos el 'event' y se lo pasamos a la función
+    document.getElementById('formulario').onsubmit = (event) => insertarContacto(event);
 
     document.getElementById('nombre').value = '';
     document.getElementById('apellidos').value = '';
     document.getElementById('correo').value = '';
     document.getElementById('telefono').value = '';
+    document.getElementById('imagen').value = '';
+    document.getElementById('imgForm').src = IMAGEN_PERFIL_INICIO;
 
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
 }
 
 function abrirModalModificarContacto(contacto) {
-        
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Modificar contacto';
     boton.className = '';
@@ -32,20 +35,19 @@ function abrirModalModificarContacto(contacto) {
     // cambiar título
     document.getElementById('tituloModal').textContent = 'Modificar contacto';
 
-    // modificar submit
+    // CORREGIDO: También añadimos el evento por seguridad al modificar
     document.getElementById('formulario').onsubmit = (event) => {
-      event.preventDefault();
-      modificarContacto(contacto.fila);
-      }
+        if (event) event.preventDefault();
+        modificarContacto(contacto.fila);
+    }
    
     // Obtener datos
     document.getElementById('nombre').value = contacto.nombre;
     document.getElementById('apellidos').value = contacto.apellidos;
     document.getElementById('correo').value = contacto.correo;
     document.getElementById('telefono').value = contacto.telefono;
-
+    
     // abrir modal
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
 }
-
 </script>

@@ -71,7 +71,7 @@ function crearTablaContactosCorrectamente(datos) {
 
 
             // estilo de la tabla
-            tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success', 'border-dark');
+            tabla.classList.add('table', 'table-striped', 'border', 'border-4', 'table-success', 'border-dark');
 
             // agregar a la web
             document.getElementById('divContactos').appendChild(tabla);
@@ -80,6 +80,7 @@ function crearTablaContactosCorrectamente(datos) {
             eliminarLoader();
 
 }
+
 function crearTablaContactosError() {
           // Mostrar notificación de error
           crearNotificacionError('No se ha encontrado los datos', 'ERROR');
@@ -104,6 +105,14 @@ function crearHeaderTabla(columnas) {
         primeraFila.appendChild(celda);
 
     });
+
+    // Agregamos manualmente la columna de acciones que le faltaba a la cabecera
+    // ==========================================
+    let celdaOpciones = document.createElement('th');
+    celdaOpciones.textContent = 'OPCIONES';
+    celdaOpciones.classList.add('text-center'); // Centramos el título para que cuadre con los botones
+    primeraFila.appendChild(celdaOpciones);
+    // ==========================================
 
     // agregamos fila al header
     tablaHeader.appendChild(primeraFila); 
@@ -150,14 +159,13 @@ function crearCeldaImagen(rutaImagen) {
 
     let celda = document.createElement('td');
     let imagen = document.createElement('img');
-    imagen.classList.add('img-fluid','rounded');
+    imagen.classList.add('img-fluid','rounded','img-tabla');
     imagen.src = rutaImagen;
     celda.appendChild(imagen);
 
     return celda;
 }
 
-// Añadimos 'fila' como segundo parámetro
 function crearCeldaBotones(contacto) {
 
     // Crear celda

@@ -6,6 +6,13 @@ window.addEventListener('scroll', function() {
     if(this.window.scrollY < 500) document.getElementById('botonSubir').style.transform = 'scale(0)';
 });
 
+// Evento cargar imagen
+document.getElementById('imagen').addEventListener('change', function() {
+
+    document.getElementById('imgForm').src = URL.createObjectURL(this.files[0]);
+    
+});
+
 function subirArriba() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
@@ -26,48 +33,88 @@ function mostrar() {
     eliminarLoader();
 }
 // INSERTAR CONTACTO
-function insertarContacto(event) {
-
-    // llamamos a limpiar para eliminar tabla y loader
-    limpiar();
-    event.preventDefault();
-
-    // Obtenemos el formulario
-    const formulario = document.getElementById('formulario');
-
-    // 4. Si el código pasa de aquí, significa que todo está RELLENADO y CORRECTO
-    bootstrap.Modal.getInstance(document.getElementById('crearContactoModal')).hide();
-        
-    // Enviamos los datos limpios a Google Sheets
-    google.script.run
-        .withSuccessHandler(contactoInsertadoCorrectamente)
-        .withFailureHandler(contactoInsertadoError)
-        .insertarContacto(
-            formulario.nombre.value, 
-            formulario.apellidos.value, 
-            formulario.correo.value, 
-            formulario.telefono.value
-        );
+function guardarDatosContacto() {
+    // CORREGIDO: Devolvemos solo los campos de texto puros. 
+    // La imagen se procesará de forma independiente mediante sus bytes.
+    let contacto = {
+        nombre: document.getElementById('nombre').value,
+        apellidos: document.getElementById('apellidos').value,
+        correo: document.getElementById('correo').value,
+        telefono: document.getElementById('telefono').value
+    };
+    return contacto;
 }
 
-function contactoInsertadoCorrectamente() {
+function insertarContacto(event) {
+    if (event) event.preventDefault();
+
+    let contacto = guardarDatosContacto();
+    let archivo = document.getElementById('imagen').files[0];
+
+    if (archivo) {
+        subirImagen(contacto, archivo); 
+    } else {
+        let svgSilueta = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cccccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+        
+        let imagenParametro = {
+            porDefecto: true,
+            base64: svgSilueta
+        };
+        
+        google.script.run
+            .withSuccessHandler(contactoInsertadoCorrectamente)
+            .withFailureHandler(contactoInsertadoError)
+            .insertarContacto(contacto, imagenParametro); 
+    }
+}
+
+function subirImagen(contacto, archivo) {
+    console.log("=== 3. Dentro de subirImagen(). Leyendo archivo... ===");
     
-    // Eliminamos los datos de los inputs
+    let fr = new FileReader();
+    fr.readAsArrayBuffer(archivo);
+
+    fr.onload = function() {
+        console.log("=== 4. Archivo cargado en memoria. Reconstruyendo bytes... ===");
+        
+        // CORREGIDO: Vinculamos las propiedades del parámetro 'archivo' que recibe la función
+        let imagen = {
+            nombre: archivo.name,
+            tipo: archivo.type,
+            datos: Array.from(new Int8Array(this.result)) // Uint8Array correcto sin signo
+        };
+
+        console.log("=== 5. Enviando datos estructurados al servidor de Google ===");
+        google.script.run
+            .withSuccessHandler(contactoInsertadoCorrectamente)
+            .withFailureHandler(contactoInsertadoError)
+            .insertarContacto(contacto, imagen);
+    }
+}
+
+// CORREGIDO: Movido el cierre de Bootstrap y limpiar() aquí (dentro del éxito)
+function contactoInsertadoCorrectamente() {
+    console.log("=== 6. ¡Servidor responde con Éxito! Actualizando interfaz ===");
+    
+    limpiar(); // Borra tablas viejas o loaders
+
+    // Cierra el modal de manera segura en la pantalla
+    const modalElemento = document.getElementById('crearContactoModal');
+    const modalInstancia = bootstrap.Modal.getInstance(modalElemento);
+    if (modalInstancia) {
+        modalInstancia.hide();
+    }
+
+    // Resetea los campos del formulario
     document.getElementById('formulario').reset();
 
-    // Crear notificación
-    crearNotificacionContacto('Contacto insertado correctamente', 'CONTACTO OK');
-
-    mostrar();
-
+    // Redibuja la tabla con el nuevo contacto ya insertado
+    crearTablaContactos(); 
 }
 
-function contactoInsertadoError() {
-
-  crearNotificacionError('No se ha podido insertar el contacto', 'ERROR');
-
-  mostrar();
-    
+function contactoInsertadoError(error) {
+    console.error("❌ Error en el servidor:", error);
+    alert("No se pudo guardar el contacto. Revisa la consola.");
 }
 
 // MODIFICAR CONTACTO
