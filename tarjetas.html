@@ -123,6 +123,7 @@ function crearImagenTarjeta(contacto) {
     let imagen = document.createElement('img');
     imagen.classList.add('img-fluid','rounded','img-contacto');
     imagen.src = contacto.imagen;
+    console.log(contacto.imagen);
 
     // agregamos caja a la tarjeta
     cajaImagenTarjeta.appendChild(imagen);

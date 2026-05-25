@@ -26,7 +26,7 @@ function extraerColumnas(datos) {
 
     let columnas = [];
 
-    for (let i = 1; i < datos[0].length; i++) columnas.push(datos[0][i]);
+    for (let i = 0; i < datos[0].length; i++) columnas.push(datos[0][i]);
 
     columnas.push('OPCIONES');
 
@@ -106,14 +106,6 @@ function crearHeaderTabla(columnas) {
 
     });
 
-    // Agregamos manualmente la columna de acciones que le faltaba a la cabecera
-    // ==========================================
-    let celdaOpciones = document.createElement('th');
-    celdaOpciones.textContent = 'OPCIONES';
-    celdaOpciones.classList.add('text-center'); // Centramos el título para que cuadre con los botones
-    primeraFila.appendChild(celdaOpciones);
-    // ==========================================
-
     // agregamos fila al header
     tablaHeader.appendChild(primeraFila); 
 
@@ -157,10 +149,20 @@ function crearCelda(dato) {
 
 function crearCeldaImagen(rutaImagen) {
 
+    console.log("Ruta imagen:", rutaImagen);
+
     let celda = document.createElement('td');
+
     let imagen = document.createElement('img');
+
     imagen.classList.add('img-fluid','rounded','img-tabla');
+
     imagen.src = rutaImagen;
+
+    imagen.onerror = function () {
+        console.error("ERROR cargando imagen:", rutaImagen);
+    };
+
     celda.appendChild(imagen);
 
     return celda;
