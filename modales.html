@@ -28,6 +28,8 @@ function abrirModalCrearContacto() {
 }
 
 function abrirModalModificarContacto(contacto) {
+
+    // boton modificar
     let boton = document.getElementById('botonCrearModificar');
     boton.textContent = 'Modificar contacto';
     boton.className = '';
@@ -54,4 +56,18 @@ function abrirModalModificarContacto(contacto) {
     // abrir modal
     bootstrap.Modal.getOrCreateInstance(document.getElementById('crearContactoModal')).show();
 }
+
+function abrirModalInfoContacto(contacto) {
+
+    // Obtener datos
+    document.getElementById('nombreInfoContacto').textContent = contacto.nombre + ' ' + contacto.apellidos;
+    document.getElementById('correoInfoContacto').textContent = contacto.correo;
+    document.getElementById('telefonoInfoContacto').textContent = contacto.telefono;
+    document.getElementById('imgInfoContacto').src = contacto.imagen;
+    document.getElementById('imgInfoContacto').dataset.url = contacto.imagen;
+
+    // abrir modal
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('infoContactoModal')).show();
+}
+
 </script>

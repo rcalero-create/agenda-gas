@@ -1,4 +1,13 @@
 <script>
+   
+    // CONSTANTES
+    const ICONO_CHECK = 'bi-check-circle';
+    const ICONO_ERROR = 'bi-x-circle';
+    const ICONO_CONTACTO = 'bi-person-lines-fill';
+    const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
+    const ICONO_PAPELERA = 'bi-trash';
+
+    // EVENTOS GLOBALES
     // boton subir
     window.addEventListener('scroll', function () {
         if (this.window.scrollY > 500) document.getElementById('botonSubir').style.transform = 'scale(1)';
@@ -11,6 +20,108 @@
             document.getElementById('imgForm').src = URL.createObjectURL(this.files[0]);
         }
     });
+
+    // Dragover
+    document.getElementById('imgForm').addEventListener('dragover', function (event) {
+        event.preventDefault();
+        this.style.filter = 'opacity(0%)'; // Efecto visual al arrastrar
+        document.getElementById('cajaIconoForm').style.display = 'flex'; // Mostrar la caja del icono
+    });
+
+
+    // Dragleave
+    document.getElementById('imgForm').addEventListener('dragleave', function (event) {
+        event.preventDefault();
+        this.style.filter = 'opacity(100%)'; // Efecto visual al arrastrar
+    });
+
+    // Drop
+    document.getElementById('imgForm').addEventListener('drop', function (event) {
+        event.preventDefault();
+        let ficheros = event.dataTransfer.files;
+
+        // pasamos los archivos al input file para que se puedan subir posteriormente
+        document.getElementById('imagen').files = ficheros;
+        // mostramos la imagen en el formulario
+        document.getElementById('imgForm').src = URL.createObjectURL(ficheros[0]);
+        // ocultamos la caja del icono
+        this.style.filter = 'opacity(100%)'; // Efecto visual al arrastrar
+        document.getElementById('cajaIconoForm').style.display = 'none';
+    });
+
+    // Copiar correo al portapapeles
+    document.getElementById('copiarCorreo').addEventListener('click', function (event) {
+        event.preventDefault();        
+        copiarContenido(this, 'correoInfoContacto');
+            // Alerta medio segundo después
+            setTimeout(function() {
+               if (typeof crearNotificacionOk === 'function') {
+                   crearNotificacionOk('Correo copiado al portapapeles', '¡Éxito!');
+                }
+            },1000); // 1000 ms = 1 segundo
+        });
+    
+
+    // Copiar teléfono al portapapeles
+    document.getElementById('copiarTelefono').addEventListener('click', function (event) {
+        event.preventDefault();
+        copiarContenido(this, 'telefonoInfoContacto');
+            // Alerta medio segundo después
+            setTimeout(function() {
+                if (typeof crearNotificacionOk === 'function') {
+                    crearNotificacionOk('Teléfono copiado al portapapeles', '¡Éxito!');
+                }
+            }, 1000); // 1000 ms = 1 segundo
+    });
+    
+
+    function copiarContenido(icono, id) {
+
+        let texto = document.getElementById(id).textContent;
+        
+        navigator.clipboard.writeText(texto)
+        .then(() => {
+
+            // Copiamos el icono de check
+            icono.classList.remove('bi-clipboard');
+            icono.classList.add('bi-clipboard-check');
+            icono.title='Copiado';
+            
+            // Destruimos el icono check
+            let tooltip = bootstrap.Tooltip.getInstance(icono);
+            if(tooltip) tooltip.dispose();
+            bootstrap.Tooltip.getOrCreateInstance(icono).show();
+             // Muestra tooltip actualizado con el nuevo título
+
+          restaurarIcono(icono);  
+        });
+        
+    }
+
+function restaurarIcono(icono) {
+    setTimeout(function() {
+        icono.classList.remove('bi-clipboard-check');
+        icono.classList.add('bi-clipboard');
+        icono.title = '';
+        bootstrap.Tooltip.getInstance(icono).dispose();
+
+    }, 2000); // 2000 milisegundos = 2 segundos
+}
+
+
+
+
+
+
+
+
+
+
+
+    ///////////////////////////////////////////////////
+    /////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
+
 
     function subirArriba() {
         document.body.scrollTop = 0;
@@ -248,4 +359,10 @@ function contactosImportadosError(detalleError) {
     }
     mostrar();
 }
+
+// POPOVERS DE BOOTSTRAP (para el icono de ayuda en el formulario)
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+
 </script>
