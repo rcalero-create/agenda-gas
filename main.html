@@ -2,7 +2,7 @@
 
   <!-- botones superiores -->
   <div class="d-flex justify-content-center my-3">
-    <button type="button" class="btn btn-success m-2" onclick="crearTarjetasContactos();">
+    <button type="button" class="btn btn-success m-2" onclick="crearTarjetasCuadradas();">
       <i class="bi bi-postcard"></i>
     </button>
     <button type="button" class="btn btn-success m-2" onclick="crearTablaContactos();">
@@ -106,18 +106,21 @@
               <div class="d-flex align-items-center">
                 <i class="bi bi-envelope-fill me-2"></i>
                 <h5 class="me-4" id="correoInfoContacto"></h5>
-                <i id="copiarCorreo" class="bi bi-clipboard boton-copiar" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Copiar correo"></i>
+                <i id="copiarCorreo" class="bi bi-clipboard boton-copiar" class="btn btn-secondary"
+                  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Copiar correo"></i>
               </div>
               <div class="d-flex align-items-center">
                 <i class="bi bi-phone-fill me-2"></i>
                 <h5 class="me-4" id="telefonoInfoContacto"></h5>
-                <i id="copiarTelefono" class="bi bi-clipboard boton-copiar" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Copiar teléfono"></i>
+                <i id="copiarTelefono" class="bi bi-clipboard boton-copiar" data-bs-toggle="tooltip"
+                  data-bs-placement="right" data-bs-title="Copiar teléfono"></i>
               </div>
             </div>
 
             <!-- Parte inferior -->
             <div class="m-3">
-              <img id="imgInfoContacto" class="border border-4 border-dark rounded" alt="Vista previa de la imagen de contacto">
+              <img id="imgInfoContacto" class="border border-4 border-dark rounded"
+                alt="Vista previa de la imagen de contacto">
             </div>
           </div>
         </div>
@@ -128,6 +131,35 @@
       </div>
     </div>
   </div>
+  <template id="plantillaContacto">
 
+    <div id="plantillaLoader" class="" my-5 mx-2 plantilla-loader>
+      <p>Cargando...</p>
+      <div class="lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
+    <div id="plantillaNumero" class="my-5 mx-2">
+      <div class="caja-contacto">
+        <img id="plantillaImagen" alt="">
+        <div class="datos-contacto">
+          <h3 id="plantillaNombre"></h3>
+          <span>
+
+            <a id="plantillaInfo" class="boton-caja btn btn-success"><i class="bi bi-plus-square"></i></a>
+            <a id="plantillaEditar" class="boton-caja btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+            <a id="plantillaBorrar" class="boton-caja btn btn-danger"><i class="bi bi-trash"></i></a>
+
+          </span>
+
+        </div>
+
+      </div>
+
+  </template>
 
 </main>
