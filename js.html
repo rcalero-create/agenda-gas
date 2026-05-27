@@ -7,7 +7,50 @@
     const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
     const ICONO_PAPELERA = 'bi-trash';
 
+    const ESTILO_TARJETA_1 = 'plantillaContacto';
+    const ESTILO_TARJETA_2 = 'plantillaContacto2';
+    const ESTILO_TARJETA_3 = 'plantillaContacto3';
+    const ESTILO_TARJETA_4 = 'plantillaContacto4';
+    const ESTILO_TARJETA_5 = 'plantillaContacto5';
+
+    let estiloActual = ESTILO_TARJETA_1; // Variable global para controlar el estilo actual de las tarjetas
+
     // EVENTOS GLOBALES
+
+    // Evento para mostrar tarjetas al cargar la página
+    document.getElementById('tarjetasEstiloTabla').addEventListener('click', function(event) {
+        crearTablaContactos();
+    }); 
+
+    document.getElementById('tarjetasEstiloFila').addEventListener('click', function(event) {
+        crearTarjetasContactos();
+    }); 
+
+     document.getElementById('tarjetasEstilo1').addEventListener('click', function(event) {
+        estiloActual = ESTILO_TARJETA_1;
+        crearTarjetasCuadradas();
+    });
+
+    document.getElementById('tarjetasEstilo2').addEventListener('click', function(event) {
+        estiloActual = ESTILO_TARJETA_2;
+        crearTarjetasCuadradas();
+    });
+
+    document.getElementById('tarjetasEstilo3').addEventListener('click', function(event) {
+        estiloActual = ESTILO_TARJETA_3;
+        crearTarjetasCuadradas();
+    });
+
+    document.getElementById('tarjetasEstilo4').addEventListener('click', function(event) {
+        estiloActual = ESTILO_TARJETA_4;
+        crearTarjetasCuadradas();
+    });
+
+    document.getElementById('tarjetasEstilo5').addEventListener('click', function(event) {
+        estiloActual = ESTILO_TARJETA_5;
+        crearTarjetasCuadradas();
+    });
+
     // boton subir
     window.addEventListener('scroll', function () {
         if (this.window.scrollY > 500) document.getElementById('botonSubir').style.transform = 'scale(1)';

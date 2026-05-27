@@ -34,7 +34,7 @@ function crearTarjetasCuadradasCorrectamente(datos) {
 
 function crearContactoPlantilla(contacto) {
 
-    let plantilla = document.getElementById('plantillaContacto');
+    let plantilla = document.getElementById(estiloActual);
     let copia = document.importNode(plantilla.content, true);
 
     copia.getElementById('plantillaNumero').id = 'tarjeta' + contacto.fila;
