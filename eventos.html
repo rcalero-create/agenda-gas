@@ -1,0 +1,102 @@
+<script>
+
+     // EVENTOS GLOBALES
+
+    // Insertar contacto
+    document.getElementById('insertarContacto').addEventListener('click', function(event) {
+        event.preventDefault();
+        Contacto.nuevo();
+    });
+
+    // Evento para mostrar tarjetas al cargar la página
+     document.getElementById('tarjetasEstilo1').addEventListener('click', function(event) {
+        Contacto.aplicarEstilo(Contacto.ESTILO_1);
+       
+    });
+
+    document.getElementById('tarjetasEstilo2').addEventListener('click', function(event) {
+        Contacto.aplicarEstilo(Contacto.ESTILO_2);
+       
+    });
+
+    document.getElementById('tarjetasEstilo3').addEventListener('click', function(event) {
+        Contacto.aplicarEstilo(Contacto.ESTILO_3);
+      
+    });
+
+    document.getElementById('tarjetasEstilo4').addEventListener('click', function(event) {
+        Contacto.aplicarEstilo(Contacto.ESTILO_4);
+        
+    });
+
+    document.getElementById('tarjetasEstilo5').addEventListener('click', function(event) {
+        Contacto.aplicarEstilo(Contacto.ESTILO_5);
+        
+    });
+
+    // boton subir
+    window.addEventListener('scroll', function () {
+        if (this.window.scrollY > 500) document.getElementById('botonSubir').style.transform = 'scale(1)';
+        if (this.window.scrollY < 500) document.getElementById('botonSubir').style.transform = 'scale(0)';
+    });
+
+    // Evento cargar imagen
+    document.getElementById('imagen').addEventListener('change', function () {
+        if (this.files && this.files[0]) document.getElementById('imgForm').src = URL.createObjectURL(this.files[0]);
+    });
+
+    // Dragover
+    document.getElementById('imgForm').addEventListener('dragover', function (event) {
+        event.preventDefault();
+        this.style.filter = 'opacity(0%)'; // Efecto visual al arrastrar
+        document.getElementById('cajaIconoForm').style.display = 'flex'; // Mostrar la caja del icono
+    });
+
+
+    // Dragleave
+    document.getElementById('imgForm').addEventListener('dragleave', function (event) {
+        event.preventDefault();
+        this.style.filter = 'opacity(100%)'; // Efecto visual al arrastrar
+    });
+
+    // Drop
+    document.getElementById('imgForm').addEventListener('drop', function (event) {
+        event.preventDefault();
+        let ficheros = event.dataTransfer.files;
+
+        // pasamos los archivos al input file para que se puedan subir posteriormente
+        document.getElementById('imagen').files = ficheros;
+        // mostramos la imagen en el formulario
+        document.getElementById('imgForm').src = URL.createObjectURL(ficheros[0]);
+        // ocultamos la caja del icono
+        this.style.filter = 'opacity(100%)'; // Efecto visual al arrastrar
+        document.getElementById('cajaIconoForm').style.display = 'none';
+    });
+
+    // Copiar correo al portapapeles
+    document.getElementById('copiarCorreo').addEventListener('click', function (event) {
+        event.preventDefault();        
+        copiarContenido(this, 'correoInfoContacto');
+            // Alerta medio segundo después
+            setTimeout(function() {
+               if (typeof crearNotificacionOk === 'function') {
+                   crearNotificacionOk('Correo copiado al portapapeles', '¡Éxito!');
+                }
+            },1000); // 1000 ms = 1 segundo
+        });
+    
+
+    // Copiar teléfono al portapapeles
+    document.getElementById('copiarTelefono').addEventListener('click', function (event) {
+        event.preventDefault();
+        copiarContenido(this, 'telefonoInfoContacto');
+            // Alerta medio segundo después
+            setTimeout(function() {
+                if (typeof crearNotificacionOk === 'function') {
+                    crearNotificacionOk('Teléfono copiado al portapapeles', '¡Éxito!');
+                }
+            }, 1000); // 1000 ms = 1 segundo
+    });
+
+    
+</script>

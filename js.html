@@ -6,119 +6,9 @@
     const ICONO_CONTACTO = 'bi-person-lines-fill';
     const ICONO_ADVERTENCIA = 'bi-exclamation-triangle';
     const ICONO_PAPELERA = 'bi-trash';
+  
 
-    const ESTILO_TARJETA_1 = 'plantillaContacto';
-    const ESTILO_TARJETA_2 = 'plantillaContacto2';
-    const ESTILO_TARJETA_3 = 'plantillaContacto3';
-    const ESTILO_TARJETA_4 = 'plantillaContacto4';
-    const ESTILO_TARJETA_5 = 'plantillaContacto5';
-
-    let estiloActual = ESTILO_TARJETA_1; // Variable global para controlar el estilo actual de las tarjetas
-
-    // EVENTOS GLOBALES
-
-    // Evento para mostrar tarjetas al cargar la página
-    document.getElementById('tarjetasEstiloTabla').addEventListener('click', function(event) {
-        crearTablaContactos();
-    }); 
-
-    document.getElementById('tarjetasEstiloFila').addEventListener('click', function(event) {
-        crearTarjetasContactos();
-    }); 
-
-     document.getElementById('tarjetasEstilo1').addEventListener('click', function(event) {
-        estiloActual = ESTILO_TARJETA_1;
-        crearTarjetasCuadradas();
-    });
-
-    document.getElementById('tarjetasEstilo2').addEventListener('click', function(event) {
-        estiloActual = ESTILO_TARJETA_2;
-        crearTarjetasCuadradas();
-    });
-
-    document.getElementById('tarjetasEstilo3').addEventListener('click', function(event) {
-        estiloActual = ESTILO_TARJETA_3;
-        crearTarjetasCuadradas();
-    });
-
-    document.getElementById('tarjetasEstilo4').addEventListener('click', function(event) {
-        estiloActual = ESTILO_TARJETA_4;
-        crearTarjetasCuadradas();
-    });
-
-    document.getElementById('tarjetasEstilo5').addEventListener('click', function(event) {
-        estiloActual = ESTILO_TARJETA_5;
-        crearTarjetasCuadradas();
-    });
-
-    // boton subir
-    window.addEventListener('scroll', function () {
-        if (this.window.scrollY > 500) document.getElementById('botonSubir').style.transform = 'scale(1)';
-        if (this.window.scrollY < 500) document.getElementById('botonSubir').style.transform = 'scale(0)';
-    });
-
-    // Evento cargar imagen
-    document.getElementById('imagen').addEventListener('change', function () {
-        if (this.files && this.files[0]) {
-            document.getElementById('imgForm').src = URL.createObjectURL(this.files[0]);
-        }
-    });
-
-    // Dragover
-    document.getElementById('imgForm').addEventListener('dragover', function (event) {
-        event.preventDefault();
-        this.style.filter = 'opacity(0%)'; // Efecto visual al arrastrar
-        document.getElementById('cajaIconoForm').style.display = 'flex'; // Mostrar la caja del icono
-    });
-
-
-    // Dragleave
-    document.getElementById('imgForm').addEventListener('dragleave', function (event) {
-        event.preventDefault();
-        this.style.filter = 'opacity(100%)'; // Efecto visual al arrastrar
-    });
-
-    // Drop
-    document.getElementById('imgForm').addEventListener('drop', function (event) {
-        event.preventDefault();
-        let ficheros = event.dataTransfer.files;
-
-        // pasamos los archivos al input file para que se puedan subir posteriormente
-        document.getElementById('imagen').files = ficheros;
-        // mostramos la imagen en el formulario
-        document.getElementById('imgForm').src = URL.createObjectURL(ficheros[0]);
-        // ocultamos la caja del icono
-        this.style.filter = 'opacity(100%)'; // Efecto visual al arrastrar
-        document.getElementById('cajaIconoForm').style.display = 'none';
-    });
-
-    // Copiar correo al portapapeles
-    document.getElementById('copiarCorreo').addEventListener('click', function (event) {
-        event.preventDefault();        
-        copiarContenido(this, 'correoInfoContacto');
-            // Alerta medio segundo después
-            setTimeout(function() {
-               if (typeof crearNotificacionOk === 'function') {
-                   crearNotificacionOk('Correo copiado al portapapeles', '¡Éxito!');
-                }
-            },1000); // 1000 ms = 1 segundo
-        });
-    
-
-    // Copiar teléfono al portapapeles
-    document.getElementById('copiarTelefono').addEventListener('click', function (event) {
-        event.preventDefault();
-        copiarContenido(this, 'telefonoInfoContacto');
-            // Alerta medio segundo después
-            setTimeout(function() {
-                if (typeof crearNotificacionOk === 'function') {
-                    crearNotificacionOk('Teléfono copiado al portapapeles', '¡Éxito!');
-                }
-            }, 1000); // 1000 ms = 1 segundo
-    });
-    
-
-    function copiarContenido(icono, id) {
+function copiarContenido(icono, id) {
 
         let texto = document.getElementById(id).textContent;
         
@@ -151,255 +41,41 @@ function restaurarIcono(icono) {
     }, 2000); // 2000 milisegundos = 2 segundos
 }
 
+function extraerContactos(datos) {
 
+    let contactos = []; // declaramos un vector
 
+    for (let i = 1; i < datos.length; i++) {
 
-
-
-
-
-
-
+        // añadimos el objeto al vector
+        contactos.push(new Contacto(datos[i][0], datos[i][1], datos[i][2], datos[i][3], datos[i][4], i + 1));
+    }
+    return contactos;
+}
 
     ///////////////////////////////////////////////////
     /////////////////////////////////////////////////////
     //////////////////////////////////////////////////////
 
 
-    function subirArriba() {
+function subirArriba() {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
     }
 
-    function limpiar() {
-        eliminarTabla();
-        eliminarTarjetas();
-        // Crearemos un icono de carga
-        crearLoaderAnillo('divContactos');
-    }
-
-    function mostrar() {
-        crearTarjetasContactos();
-        eliminarLoader();
-    }
-
-    // INSERTAR CONTACTO
-    function guardarDatosContacto() {
-        let contacto = {
-            nombre: document.getElementById('nombre').value,
-            apellidos: document.getElementById('apellidos').value,
-            correo: document.getElementById('correo').value,
-            telefono: document.getElementById('telefono').value,
-            imagen: document.getElementById('imgForm').src
-        };
-        return contacto;
-    }
-
-    function insertarContacto(event) {
-        if (event) event.preventDefault();
-
-        let contacto = guardarDatosContacto();
-        let archivo = document.getElementById('imagen').files[0];
-
-        if (archivo) {
-            subirImagenInsertar(contacto, archivo);
-        } else {
-            let svgSilueta = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cccccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
-
-            let imagenParametro = {
-                porDefecto: true,
-                base64: svgSilueta
-            };
-
-            google.script.run
-                .withSuccessHandler(contactoInsertadoCorrectamente)
-                .withFailureHandler(contactoInsertadoError)
-                .insertarContacto(contacto, imagenParametro);
-        }
-    }
-
-    function subirImagenInsertar(contacto, archivo) {
-
-    console.log("=== INSERTAR: leyendo archivo ===");
-
-    let fr = new FileReader();
-
-    fr.readAsDataURL(archivo);
-
-    fr.onload = function () {
-
-        console.log("=== INSERTAR: archivo convertido a Base64 ===");
-
-        let imagen = {
-            nombre: archivo.name,
-            tipo: archivo.type,
-            base64: this.result,
-            porDefecto: false
-        };
-
-        console.log("=== INSERTAR: enviando al servidor ===");
-
-        google.script.run
-            .withSuccessHandler(contactoInsertadoCorrectamente)
-            .withFailureHandler(contactoInsertadoError)
-            .insertarContacto(contacto, imagen);
-    };
+function limpiar() {
+    eliminarTarjetas();
+    // Crearemos un icono de carga
+    crearLoaderAnillo('divContactos');
 }
 
-    // CORREGIDO: Ahora lee en Base64 (readAsDataURL) y rellena la propiedad .base64
-    // CORREGIDO: Pasamos explícitamente el objeto 'contacto' dentro de la función de la imagen
-function subirImagenModificar(contacto, archivo) {
-    console.log("=== 3. Dentro de subirImagenModificar(). Leyendo archivo... ===");
+function mostrar() {
 
-    let fr = new FileReader();
-    fr.readAsDataURL(archivo);
-
-    fr.onload = function () {
-        console.log("=== 4. Archivo cargado en memoria. Reconstruyendo Base64... ===");
-
-        let imagen = {
-            nombre: archivo.name,
-            tipo: archivo.type,
-            base64: this.result,
-            porDefecto: false
-        };
-
-        console.log("=== 5. Enviando datos estructurados para Modificar al servidor ===");
-        // Forzamos que viaje el contacto que recibimos por parámetro
-        google.script.run
-            .withSuccessHandler(contactoModificadoCorrectamente)
-            .withFailureHandler(contactoModificadoError)
-            .modificarContacto(contacto, imagen);
-    }
-}
-    
-function contactoInsertadoCorrectamente() {
-    console.log("=== 6. ¡Servidor responde con Éxito! Actualizando interfaz ===");
-    limpiar(); 
-    
-    const modalElemento = document.getElementById('crearContactoModal');
-    const modalInstancia = bootstrap.Modal.getInstance(modalElemento);
-    if (modalInstancia) {
-        modalInstancia.hide();
-    }
-
-    document.getElementById('formulario').reset();
-    
-    // CORREGIDO: Usamos la función mostrar() o crearTablaContactos() según tu flujo para refrescar
-    if (typeof crearTablaContactos === 'function') {
-        crearTablaContactos();
-    } else {
-        mostrar();
-    }
+    crearTarjetas();
 }
 
-function contactoInsertadoError(error) {
-        console.error("❌ Error en el servidor al insertar:", error);
-        alert("No se pudo guardar el contacto. Revisa la consola.");
-        mostrar();
-    }
-
-    // MODIFICAR CONTACTO
-    // CORREGIDO: Aseguramos la recolección completa del objeto contacto antes de hacer nada
-function modificarContacto(filaIndex) {
-    // 1. Creamos el objeto contacto AQUÍ mismo con todos los datos frescos del formulario
-    let contacto = guardarDatosContacto();
-    contacto.fila = parseInt(filaIndex); // Aseguramos que sea un número entero limpio
-
-    // 2. Comprobamos si hay un archivo seleccionado en el input
-    let archivo = document.getElementById('imagen').files[0];
-
-    // 3. Llamamos a limpiar para eliminar tabla y activar loader en la interfaz
-    limpiar();
-
-    // 4. Cerramos el modal de Bootstrap de manera segura
-    const modalElemento = document.getElementById('crearContactoModal');
-    const modalInstancia = bootstrap.Modal.getInstance(modalElemento);
-    if (modalInstancia) modalInstancia.hide();
-
-    // 5. Enrutamos el envío según corresponda
-    if (archivo) {
-        // Si hay archivo, se lo pasamos junto al contacto bien estructurado
-        subirImagenModificar(contacto, archivo);
-    } else {
-        // Si no cambia la foto, enviamos el contacto y su imagen de texto actual
-        google.script.run
-            .withSuccessHandler(contactoModificadoCorrectamente)
-            .withFailureHandler(contactoModificadoError)
-            .modificarContacto(contacto, contacto.imagen); 
-    }
-}
-
-
-function contactoModificadoCorrectamente() {
-    console.log("=== 6. ¡Servidor responde con Éxito al modificar! ===");
-    // Eliminamos los datos de los inputs reseteando el formulario
-    document.getElementById('formulario').reset();
-
-    // Crear notificación (usamos la que exista en tu proyecto)
-    if (typeof crearNotificacionContacto === 'function') {
-        crearNotificacionContacto('Contacto modificado correctamente', 'CONTACTO OK');
-    } else if (typeof crearNotificacionOk === 'function') {
-        crearNotificacionOk('Contacto modificado correctamente', 'CONTACTO OK');
-    }
-
-    // Refrescamos la vista llamando a mostrar()
-    mostrar();
-}
-
-function contactoModificadoError(error) {
-    console.error("❌ Error en el servidor al modificar:", error);
-    if (typeof crearNotificacionError === 'function') {
-        crearNotificacionError('No se ha podido modificar el contacto', 'ERROR');
-    }
-    mostrar();
-}
-
-// BORRAR CONTACTO
-function borrarContacto(filaIndex) {
-    limpiar();
-    google.script.run
-        .withSuccessHandler(contactoBorradoCorrectamente)
-        .withFailureHandler(contactoBorradoError)
-        .borrarContacto(filaIndex);
-}
-
-function contactoBorradoCorrectamente() {
-    if (typeof crearNotificacionEliminar === 'function') {
-        crearNotificacionEliminar('Contacto borrado correctamente', 'CONTACTO BORRADO');
-    }
-    mostrar();
-}
-
-function contactoBorradoError(error) {
-    console.error("❌ Error en el servidor al borrar:", error);
-    if (typeof crearNotificacionError === 'function') {
-        crearNotificacionError('No se ha podido borrar el contacto', 'ERROR');
-    }
-    mostrar();
-}
-
-// IMPORTAR CONTACTO
-function importarContactos() {
-    limpiar();
-    google.script.run
-        .withSuccessHandler(contactosImportadosCorrectamente)
-        .withFailureHandler(contactosImportadosError)
-        .importarContactos();
-}
-
-function contactosImportadosCorrectamente() {
-    if (typeof crearNotificacionOk === 'function') {
-        crearNotificacionOk('Se han agregado los contactos correctamente', '¡Éxito!');
-    }
-    mostrar();
-}
-
-function contactosImportadosError(detalleError) {
-    console.error("❌ Error al importar:", detalleError);
-    if (typeof crearNotificacionError === 'function') {
-        crearNotificacionError('No se han podido importar los contactos', 'ERROR');
-    }
+function aplicarEstilo(estilo) {
+    Contacto.estiloActual = estilo;
     mostrar();
 }
 

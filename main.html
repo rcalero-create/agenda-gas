@@ -2,23 +2,17 @@
 
   <!-- botones superiores -->
   <div class="d-flex justify-content-center my-3">
-    <!-- <button type="button" class="btn btn-success m-2" onclick="crearTarjetasCuadradas();">
-      <i class="bi bi-postcard"></i>
-    </button>
-    <button type="button" class="btn btn-success m-2" onclick="crearTablaContactos();">
-      <i class="bi bi-table"></i>
-    </button> -->
-    <button type="button" class="btn btn-primary m-2" onclick="abrirModalCrearContacto();">
+
+    <button type="button" class="btn btn-primary m-2" id="insertarContacto">
       <i class="bi bi-person-plus"></i>
     </button>
     <button type="button" class="btn btn-warning m-2" onclick="importarContactos();">+ 5</button>
+    
     <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="desplegableEstilos" data-bs-toggle="dropdown" aria-expanded="false">
+  <button class="btn btn-secondary dropdown-toggle m-2" type="button" id="desplegableEstilos" data-bs-toggle="dropdown" aria-expanded="false">
     <i class="bi bi-gear fs-5"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="desplegableEstilos">
-    <li><a class="dropdown-item" id="tarjetasEstiloTabla" >Estilo tabla</a></li>
-    <li><a class="dropdown-item" id="tarjetasEstiloFila" >Estilo fila</a></li>
     <li><a class="dropdown-item" id="tarjetasEstilo1" >Estilo tarjeta 1</a></li>
     <li><a class="dropdown-item" id="tarjetasEstilo2" >Estilo tarjeta 2</a></li>
     <li><a class="dropdown-item" id="tarjetasEstilo3" >Estilo tarjeta 3</a></li>
@@ -133,7 +127,7 @@
 
             <!-- Parte inferior -->
             <div class="m-3">
-              <img id="imgInfoContacto" class="border border-4 border-dark rounded"
+              <img id="imgInfoContacto" class="img-info-contacto"
                 alt="Vista previa de la imagen de contacto">
             </div>
           </div>
